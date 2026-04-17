@@ -75,19 +75,6 @@ backend/
 
 ---
 
-## Workload Balance
-
-| Dev | Files | Endpoints | Complexity |
-|---|---|---|---|
-| Dev 1 | 12 | 7 admin endpoints | Medium — setup + admin queue controller/routes |
-| Dev 2 | 4 | 3 | Low-medium — auth |
-| Dev 3 | 4 | 5 | Medium — geo queries + recommendation |
-| Dev 4 | 5 | 3 user endpoints + all service logic | Medium-high — queue models + service + user routes |
-| Dev 5 | 4 | 1 | Low-medium — token security |
-| Dev 6 | 5 | 2 + Socket.IO | Medium — notifications + real-time |
-
----
-
 ## Key Design Decision — Queue Split
 
 `services/queue.service.js` is owned by **Dev 4** and contains ALL queue logic (both user and admin functions).
@@ -95,7 +82,6 @@ backend/
 **Dev 1** owns `controllers/queue.admin.controller.js` and `routes/queue.admin.routes.js` — these just call Dev 4's service functions. This way:
 - Dev 4 writes all the business logic in one place
 - Dev 1 wires the admin HTTP layer without duplicating logic
-- No merge conflicts — different files
 
 ---
 
@@ -163,16 +149,6 @@ notification.service (Dev 6)
 realtime.service (Dev 6)
   └── reads → models/QueueEntry.js                     (Dev 4 — read only)
 ```
-
----
-
-## Rules
-
-1. Only edit files listed under your name
-2. `config/`, `middleware/`, `utils/` are read-only for Devs 2–6
-3. You may import another dev's model to read — never write to it
-4. Route files only export a router — Dev 1 mounts everything in `app.js`
-5. Dev 1 merges first, then Devs 2–6 work in parallel
 
 ---
 

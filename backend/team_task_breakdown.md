@@ -13,18 +13,6 @@ Dev 1 finishes and merges first → Devs 2, 3, 4, 5, 6 work fully in parallel
 
 ---
 
-## 🔑 Rules for Everyone
-
-1. **Only edit files listed under your name.** Never touch another dev's files.
-2. **`config/`, `middleware/`, `utils/` are read-only for Devs 2–6.** Need a change? Ask Dev 1.
-3. **Route files only export a router.** Dev 1 mounts everything in `app.js`.
-4. **You may import another dev's model to read data.** Never write to a model you don't own.
-5. **Direct service calls are fine.** Dev 4's service is called by both Dev 4's controller and Dev 1's admin controller.
-
----
-
----
-
 ## 👤 Dev 1 — Project Setup + Admin Queue Controller
 **Role:** Team Lead / Architect  
 **Must finish and merge before anyone else starts.**
@@ -450,7 +438,3 @@ Export router only.
 | Dev 6 `realtime.service` | Dev 4 `QueueEntry` model | Read position on WebSocket connect |
 
 ---
-
-## 🚫 NOT in MVP
-
-ML predictions · Route optimization · Carpooling · Analytics dashboard · Payment integration
