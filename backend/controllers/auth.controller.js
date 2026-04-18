@@ -1,2 +1,1 @@
-// DEV 2 — Auth
-// TODO: implement auth controller
+// TODO: Dev 2

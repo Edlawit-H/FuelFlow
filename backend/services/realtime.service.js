@@ -1,10 +1,2 @@
-// DEV 6 — Real-time
-// TODO: Dev 6 implements this fully
-
-export const init = (io) => {
-  // placeholder — Dev 6 implements this
-};
-
-export const pushPositionUpdate = (userId, data) => {
-  // placeholder — Dev 6 implements this
-};
+// Placeholder for future Socket.IO integration.
+// Queue updates currently use polling: GET /api/v1/queue/my-status

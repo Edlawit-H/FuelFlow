@@ -1,2 +1,1 @@
-// DEV 2 — Auth
-// TODO: implement User model
+// TODO: Dev 2

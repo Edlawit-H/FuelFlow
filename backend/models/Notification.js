@@ -1,2 +1,1 @@
-// DEV 6 — Notification
-// TODO: implement Notification model
+// TODO: Dev 6

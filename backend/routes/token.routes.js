@@ -1,5 +1,4 @@
-// DEV 5 — Token routes
-// TODO: Dev 5 implements this
+// TODO: Dev 5
 import { Router } from 'express';
 const router = Router();
 export default router;

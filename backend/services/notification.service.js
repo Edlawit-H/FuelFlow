@@ -1,2 +1,1 @@
-// DEV 6 — Notification
-// TODO: implement notification service
+// TODO: Dev 6

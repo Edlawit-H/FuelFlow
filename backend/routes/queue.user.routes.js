@@ -1,5 +1,4 @@
-// DEV 4 — Queue user routes
-// TODO: Dev 4 implements this
+// TODO: Dev 4
 import { Router } from 'express';
 const router = Router();
 export default router;
