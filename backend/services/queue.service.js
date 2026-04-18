@@ -1,4 +1,4 @@
-// TODO: Dev 4 implements all functions
+// TODO: Dev 4
 
 export const joinQueue = async (userId, stationId, fuelType) => {};
 export const leaveQueue = async (userId, stationId, fuelType) => {};

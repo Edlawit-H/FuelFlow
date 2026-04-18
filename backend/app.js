@@ -6,7 +6,6 @@ import stationRoutes from './routes/station.routes.js';
 import queueUserRoutes from './routes/queue.user.routes.js';
 import queueAdminRoutes from './routes/queue.admin.routes.js';
 import tokenRoutes from './routes/token.routes.js';
-import notificationRoutes from './routes/notification.routes.js';
 
 const app = express();
 
@@ -23,7 +22,6 @@ app.use('/api/v1/stations/:id/queues/:fuelType', queueAdminRoutes);
 app.use('/api/v1/stations', queueUserRoutes);
 app.use('/api/v1/queue', queueUserRoutes);
 app.use('/api/v1/tokens', tokenRoutes);
-app.use('/api/v1/notifications', notificationRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
