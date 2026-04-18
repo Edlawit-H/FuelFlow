@@ -44,6 +44,9 @@ Express · Mongoose · dotenv · bcryptjs · jsonwebtoken · express-validator �
 - `POST /auth/register` — validate input, hash password with bcrypt (rounds=10), save user, return 201
 - `POST /auth/login` — find user, compare password, return signed JWT `{ id, role }`
 - `POST /auth/register-admin` — same as register but forces role = station_admin
+- `GET /auth/me` — return `{ id, phoneOrEmail, role }` for the logged-in user (requires authenticate middleware)
+- `PATCH /auth/me` — update phoneOrEmail or password; if password provided hash it before saving; return updated user
+- `DELETE /auth/me` — delete account; reject with 400 if user has an active queue entry
 - Return 409 on duplicate phoneOrEmail
 - Return 401 on wrong password, never return token on failure
 

@@ -75,6 +75,9 @@ backend/
 | POST | `/api/v1/auth/register` | public | Dev 2 |
 | POST | `/api/v1/auth/login` | public | Dev 2 |
 | POST | `/api/v1/auth/register-admin` | public | Dev 2 |
+| GET | `/api/v1/auth/me` | user | Dev 2 |
+| PATCH | `/api/v1/auth/me` | user | Dev 2 |
+| DELETE | `/api/v1/auth/me` | user | Dev 2 |
 | POST | `/api/v1/stations` | station_admin | Dev 3 |
 | PATCH | `/api/v1/stations/:id` | station_admin | Dev 3 |
 | GET | `/api/v1/stations` | user | Dev 3 |
