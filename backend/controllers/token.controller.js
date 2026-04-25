@@ -1,26 +1,16 @@
-
 import * as tokenService from '../services/token.service.js';
 
 export const validateToken = async (req, res) => {
   try {
-    const { tokenId } = req.body;
-    // req.user.stationId is attached by Dev 1's authenticate middleware [cite: 12]
-    const adminStationId = req.user.stationId; 
-
-    const validatedToken = await tokenService.validateToken(tokenId, adminStationId);
-
-    res.status(200).json({
-      status: 'success',
-      data: {
-        position: validatedToken.queueEntryId.position,
-        joinedAt: validatedToken.issuedAt,
-        fuelType: validatedToken.fuelType
-      }
-    });
+    const { pinCode, stationId } = req.body;
+    
+    const result = await tokenService.validateTokenLogic(pinCode, stationId);
+    
+    return res.status(200).json(result);
   } catch (error) {
-    res.status(400).json({ 
-      status: 'fail', 
-      message: error.message 
+    const statusCode = error.status || 500;
+    return res.status(statusCode).json({ 
+      message: error.message || "Server Error" 
     });
   }
 };

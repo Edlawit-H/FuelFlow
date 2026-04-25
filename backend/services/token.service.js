@@ -1,63 +1,53 @@
-// TODO: Dev 5
-
 import Token from '../models/Token.js';
-import QueueEntry from '../models/QueueEntry.js';
 
 /**
- * Generates a new token and QR payload
+ * Task: createToken logic
  */
 export const createToken = async (data) => {
-  const { userId, stationId, queueEntryId, fuelType } = data;
-  
   const token = new Token({
-    userId,
-    stationId,
-    queueEntryId,
-    fuelType
+    userId: data.userId,
+    stationId: data.stationId,
+    queueEntryId: data.queueEntryId,
+    fuelType: data.fuelType
   });
-
-  // Build the QR Payload for the frontend [cite: 150]
-  token.qrPayload = JSON.stringify({
-    tokenId: token.tokenId,
-    stationId,
-    fuelType,
-    issuedAt: token.issuedAt
-  });
-
-  return await token.save(); 
+  return await token.save();
 };
 
 /**
- * Validates a token and checks if it's the user's turn
+ * Task: POST /tokens/validate logic (Fraud Prevention)
  */
-export const validateToken = async (tokenId, adminStationId) => {
-  const token = await Token.findOne({ tokenId }).populate('queueEntryId');
+export const validateTokenLogic = async (pinCode, stationId) => {
+  const token = await Token.findOne({ pinCode }).populate('queueEntryId');
 
-  if (!token) throw new Error('Token not found'); 
-  
-  // Check if scanning at the correct station [cite: 154, 155]
-  if (token.stationId.toString() !== adminStationId.toString()) {
-    throw new Error('Wrong station'); 
+  if (!token) {
+    throw { status: 404, message: "Token not found" };
   }
 
-  // Check if token was already used [cite: 156]
+  if (token.stationId.toString() !== stationId) {
+    throw { status: 403, message: "Wrong station" };
+  }
+
   if (token.status !== 'active') {
-    throw new Error(`Token already ${token.status}`);
+    throw { status: 409, message: "Code already used" };
   }
 
-  // Only validate if they are at position #1 [cite: 157]
-  if (token.queueEntryId.position !== 1) {
-    throw new Error('Not your turn yet');
+  // Check QueueEntry position === 1
+  if (!token.queueEntryId || token.queueEntryId.position !== 1) {
+    throw { status: 409, message: "Not your turn yet" };
   }
 
-  token.status = 'used'; 
+  token.status = 'used';
   await token.save();
-  
-  return token;
+
+  return {
+    position: token.queueEntryId.position,
+    joinedAt: token.issuedAt,
+    fuelType: token.fuelType
+  };
 };
 
 /**
- * Invalidates token if user leaves queue
+ * Task: invalidateToken logic
  */
 export const invalidateToken = async (queueEntryId) => {
   return await Token.findOneAndUpdate(
