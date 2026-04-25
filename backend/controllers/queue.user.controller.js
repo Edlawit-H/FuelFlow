@@ -16,3 +16,21 @@ export const joinQueue = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
+export const leaveQueue = async (req, res) => {
+  try {
+    const result = await queueService.leaveQueue(req.user.id);
+    res.json(result);
+  } catch (err) {
+    res.status(err.status || 400).json({ message: err.message });
+  }
+};
+
+export const getMyStatus = async (req, res) => {
+  try {
+    const result = await queueService.getMyStatus(req.user.id);
+    res.json(result);
+  } catch (err) {
+    res.status(err.status || 400).json({ message: err.message });
+  }
+};
