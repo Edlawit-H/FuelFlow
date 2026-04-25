@@ -16,7 +16,7 @@ export const createToken = async (data) => {
 /**
  * Task: POST /tokens/validate logic (Fraud Prevention)
  */
-export const validateTokenLogic = async (pinCode, stationId) => {
+export const validateToken = async (pinCode, stationId) => {
   const token = await Token.findOne({ pinCode }).populate('queueEntryId');
 
   if (!token) {
