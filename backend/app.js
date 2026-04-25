@@ -6,6 +6,8 @@ import stationRoutes from './routes/station.routes.js';
 import queueUserRoutes from './routes/queue.user.routes.js';
 import queueAdminRoutes from './routes/queue.admin.routes.js';
 import tokenRoutes from './routes/token.routes.js';
+import queueRoutes from "./routes/queue.routes.js";
+
 
 const app = express();
 
@@ -28,5 +30,8 @@ app.use((req, res) => {
 });
 
 app.use(errorHandler);
+app.use("/api/queue", queueRoutes);
+
+
 
 export default app;
