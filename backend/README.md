@@ -70,7 +70,7 @@ Create a `.env` file in the root directory:
 PORT=5000
 NODE_ENV=development
 
-MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/fuelflow
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/fuelflow
 MONGO_URI_TEST=mongodb://localhost:27017/fuelflow_test
 
 JWT_SECRET=your_super_secret_jwt_key_here
