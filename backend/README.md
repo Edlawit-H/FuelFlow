@@ -173,13 +173,14 @@ npx jest tests/integration.test.js
 A Postman collection covering all routes is available in the repo:
 ```
 /postman/FuelFlow.postman_collection.json
+```
 Import the API collection into Postman via **File → Import**, then set the following environment variables:
 
 | Variable  | Value                         |
 |-----------|-------------------------------|
 | BASE_URL  | http://localhost:5000         |
 | TOKEN     | (Paste JWT after login)       |
-```
+
 Import it into Postman via **File → Import**, then set these environment variables:
 
 - BASE_URL = http://localhost:5000  
