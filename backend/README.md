@@ -41,17 +41,24 @@ fuelflow/
 │   ├── QueueEntry.js       # QueueEntry schema
 │   └── Token.js            # Token schema
 ├── routes/
-│   ├── auth.js             # /auth routes
-│   ├── stations.js         # /stations routes
-│   ├── queue.js            # /queue routes
-│   └── tokens.js           # /tokens routes
+│   ├── auth.routes.js          # /auth routes
+│   ├── queue.user.routes.js
+│   ├── station.routes.js       # /stations routes
+│   ├── queue.admin.routes.js   # /queue routes
+│   └── token.routes.js         # /tokens routes
 ├── controllers/
+│   └── auth.controller.js
 │   └── queue.admin.controller.js
+│   └── queue.user.controller.js
+│   └── station.controller.js
+│   └── token.controller.js
 ├── services/
-│   ├── queue.service.js    # Queue business logic
-│   └── token.service.js    # Token creation + invalidation
+│   ├── queue.service.js       # Queue business logic
+|   ├── station.service.js
+|   ├── auth.service.js
+│   └── token.service.js       # Token creation + invalidation
 └── tests/
-    └── integration.test.js # All integration tests
+    └── integration.test.js    # All integration tests
 ```
 ---
  Setup Instructions
