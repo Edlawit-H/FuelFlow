@@ -89,6 +89,7 @@ JWT_EXPIRES_IN=7d
 npm run dev
 ```
 The server will start on `http://localhost:5000`
+
 5. Run tests
 ```bash
 npm test
