@@ -20,7 +20,7 @@ A fuel station queue management system built with Node.js, Express, MongoDB Atla
 ---
  Folder Structure
 ```
-fuelflow/
+FuelFlow/backend/
 ├── app.js                  # Express app setup + middleware
 ├── server.js               # HTTP server entry point
 ├── jest.config.js          # Jest configuration
@@ -64,7 +64,7 @@ fuelflow/
  Setup Instructions
 1. Clone the repository
 ```bash
-git clone https://github.com/your-team/fuelflow.git
+git clone https://github.com/Edlawit-H/FuelFlow.git
 cd fuelflow
 ```
 2. Install dependencies
