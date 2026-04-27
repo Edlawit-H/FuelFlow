@@ -1,10 +1,18 @@
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
-  phoneOrEmail: {
+  phone: {
     type: String,
     required: true,
     unique: true,
+    trim: true,
+  },
+  email: {
+    type: String,
+    unique: true,
+    sparse: true,
+    lowercase: true,
+    trim: true,
   },
   passwordHash: {
     type: String,

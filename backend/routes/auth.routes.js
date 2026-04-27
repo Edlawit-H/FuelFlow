@@ -1,23 +1,12 @@
-import express from 'express';
-import {
-  register,
-  login,
-  me,
-  registerAdmin,
-  updateMe,
-  deleteMe
-} from '../controllers/auth.controller.js';
-
+import { Router } from 'express';
 import authenticate from '../middleware/authenticate.js';
+import { register, login, registerAdmin, me, updateMe, deleteMe } from '../controllers/auth.controller.js';
 
-const router = express.Router();
+const router = Router();
 
-/* ---------------- AUTH ROUTES ---------------- */
 router.post('/register', register);
 router.post('/login', login);
 router.post('/register-admin', registerAdmin);
-
-/* ---------------- PROTECTED ROUTE ---------------- */
 router.get('/me', authenticate, me);
 router.patch('/me', authenticate, updateMe);
 router.delete('/me', authenticate, deleteMe);
