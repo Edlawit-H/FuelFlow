@@ -37,17 +37,18 @@ Express · Mongoose · dotenv · bcryptjs · jsonwebtoken · express-validator �
 
 **Tasks**
 - Create `User` schema:
-  - `phoneOrEmail` String, unique, required
+  - `phone` String, unique, required — main login identifier
+  - `email` String, unique, optional — can be added later on profile
   - `passwordHash` String, required
   - `role` enum: user / station_admin, default user
   - `createdAt` Date, default now
-- `POST /auth/register` — validate input, hash password with bcrypt (rounds=10), save user, return 201
-- `POST /auth/login` — find user, compare password, return signed JWT `{ id, role }`
+- `POST /auth/register` — validate phone + password, hash password with bcrypt (rounds=10), save user, return 201
+- `POST /auth/login` — find user by phone, compare password, return signed JWT `{ id, role }`
 - `POST /auth/register-admin` — same as register but forces role = station_admin
-- `GET /auth/me` — return `{ id, phoneOrEmail, role }` for the logged-in user (requires authenticate middleware)
-- `PATCH /auth/me` — update phoneOrEmail or password; if password provided hash it before saving; return updated user
+- `GET /auth/me` — return `{ id, phone, email, role }` for the logged-in user
+- `PATCH /auth/me` — update phone, email, or password; hash password if provided; return updated user
 - `DELETE /auth/me` — delete account; reject with 400 if user has an active queue entry
-- Return 409 on duplicate phoneOrEmail
+- Return 409 on duplicate phone or email
 - Return 401 on wrong password, never return token on failure
 
 **Libraries**
@@ -82,7 +83,6 @@ express-validator · Mongoose geo queries
 ## Dev 4
 ### Queue Management (User Side + All Service Logic)
 **Role: Queue Feature Developer**
-
 **Tasks**
 - Create `Queue` schema:
   - `stationId` ObjectId ref Station, required
@@ -115,7 +115,7 @@ express-validator · Mongoose geo queries
   - Call tokenService.invalidateToken()
 - `GET /queue/my-status` — polling endpoint, called every 8s by frontend:
   - If no active entry: return `{ active: false }`
-  - If active: return `{ active: true, entry: { id, position, estimatedWaitMinutes, fuelType, stationId, stationName, joinedAt, status, noShowEligible }, queue: { isPaused, fuelAvailable }, token: { tokenId, qrPayload } }`
+  - If active: return `{ active: true, entry: { id, position, estimatedWaitMinutes, fuelType, stationId, stationName, joinedAt, status, noShowEligible }, queue: { isPaused, fuelAvailable }, token: { tokenId, pinCode } }`
 - Write all admin service functions (called by Dev 1's controller):
   - `serveUser` — mark served, decrement positions, recalculate EWT
   - `removeNoShow` — mark no_show, decrement, recalculate EWT
@@ -123,7 +123,7 @@ express-validator · Mongoose geo queries
   - `resumeQueue` — set isPaused=false
   - `setFuelAvailability` — update fuelAvailable
   - `setServeTime` — update serveTimeMinutes, recalculate EWT for all active entries
-  - `getQueueList` — return active entries sorted by position with noShowEligible + elapsed time
+  - `getQueueList` — return active entries sorted by position with noShowEligible, elapsed time, and pinCode per entry
   - `runNoShowDetection` — setInterval every 60s, flag entries at position 1 past timeout window
 
 **Libraries**
@@ -138,21 +138,22 @@ Mongoose · express-validator
 **Tasks**
 - Create `Token` schema:
   - `tokenId` String, unique, required — `crypto.randomUUID()`
+  - `pinCode` String, required — 6-char unique code e.g. `A3F9B2`, generated with `crypto.randomBytes(3).toString('hex').toUpperCase()`
   - `userId` ObjectId ref User, required
   - `stationId` ObjectId ref Station, required
   - `queueEntryId` ObjectId ref QueueEntry, required
   - `fuelType` String, required
   - `status` enum: active / used / invalidated, default active
-  - `qrPayload` String — JSON string, client renders as QR code
   - `issuedAt` Date, default now
 - `createToken({ userId, stationId, queueEntryId, fuelType, joinedAt })`:
   - Generate `tokenId = crypto.randomUUID()`
-  - Build `qrPayload = JSON.stringify({ tokenId, stationId, fuelType, issuedAt })`
-  - Save and return Token document
+  - Generate `pinCode = crypto.randomBytes(3).toString('hex').toUpperCase()`
+  - Save and return Token document including `pinCode`
 - `POST /tokens/validate` (station_admin only):
-  - Find token by tokenId — 404 if not found
+  - Accept `{ pinCode, stationId }` in request body
+  - Find token by pinCode — 404 if not found
   - Check stationId matches admin's station — 403 "Wrong station"
-  - Check status === active — 409 "Token already used"
+  - Check status === active — 409 "Code already used"
   - Check QueueEntry position === 1 — 409 "Not your turn yet"
   - Set status = used, save, return `{ position, joinedAt, fuelType }`
 - `invalidateToken(queueEntryId)` — called by Dev 4 on leave queue, set status = invalidated

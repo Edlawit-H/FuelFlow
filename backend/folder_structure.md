@@ -28,11 +28,11 @@ backend/
 │   └── ewt.js                           ← Dev 1 | calculateEWT(position, serveTime)
 │
 ├── models/
-│   ├── User.js                          ← Dev 2 | phoneOrEmail, passwordHash, role
+│   ├── User.js                          ← Dev 2 | phone (required), email (optional), passwordHash, role
 │   ├── Station.js                       ← Dev 3 | name, location, fuelTypes[], adminId
 │   ├── Queue.js                         ← Dev 4 | stationId, fuelType, isPaused, counter
 │   ├── QueueEntry.js                    ← Dev 4 | userId, position, status, noShowEligible
-│   └── Token.js                         ← Dev 5 | tokenId, status, qrPayload
+│   └── Token.js                         ← Dev 5 | tokenId, pinCode, status
 │
 ├── services/
 │   ├── auth.service.js                  ← Dev 2 | register, login
@@ -107,7 +107,7 @@ Active:
   "active": true,
   "entry": { "id", "position", "estimatedWaitMinutes", "fuelType", "stationId", "stationName", "joinedAt", "status", "noShowEligible" },
   "queue": { "isPaused", "fuelAvailable" },
-  "token": { "tokenId", "qrPayload" }
+  "token": { "tokenId", "pinCode" }
 }
 ```
 
