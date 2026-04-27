@@ -1,12 +1,12 @@
 import Queue from "../models/Queue.js";
 import QueueEntry from "../models/QueueEntry.js";
-//import Station from "../models/Station.js";
+import Token from "../models/Token.js";
 import * as tokenService from "./token.service.js";
 
 
 // ================= USER FUNCTIONS ================= //
 
-// 🔹 JOIN QUEUE
+//  JOIN QUEUE
 export const joinQueue = async (userId, stationId, fuelType) => {
   const existing = await QueueEntry.findOne({
     userId,
@@ -15,24 +15,23 @@ export const joinQueue = async (userId, stationId, fuelType) => {
 
   if (existing) throw { status: 409, message: "Already in queue" };
 
-  const queue = await Queue.findOne({ stationId, fuelType });
-  if (!queue) throw { status: 404, message: "Queue not found" };
-
-  if (!queue.fuelAvailable)
-    throw { status: 409, message: "Fuel not available" };
-
-  if (queue.isPaused)
-    throw { status: 409, message: "Queue is paused" };
-
-  // atomic increment
-  const updatedQueue = await Queue.findOneAndUpdate(
-    { _id: queue._id },
+  // single atomic operation — checks fuelAvailable and isPaused in filter
+  const queue = await Queue.findOneAndUpdate(
+    { stationId, fuelType, fuelAvailable: true, isPaused: false },
     { $inc: { counter: 1 } },
     { new: true }
   );
 
-  const position = updatedQueue.counter;
-  const estimatedWaitMinutes = position * queue.serveTimeMinutes;
+  if (!queue) {
+    const check = await Queue.findOne({ stationId, fuelType });
+    if (!check) throw { status: 404, message: "Queue not found" };
+    if (!check.fuelAvailable) throw { status: 409, message: "Fuel not available" };
+    if (check.isPaused) throw { status: 409, message: "Queue is paused" };
+    throw { status: 409, message: "Cannot join queue" };
+  }
+
+  const position = queue.counter;
+  const estimatedWaitMinutes = (position - 1) * queue.serveTimeMinutes;
 
   const entry = await QueueEntry.create({
     queueId: queue._id,
@@ -43,7 +42,7 @@ export const joinQueue = async (userId, stationId, fuelType) => {
     estimatedWaitMinutes,
   });
 
-  // 🔥 TOKEN CREATION (Dev 5 integration)
+  // TOKEN CREATION (Dev 5 integration)
   const token = await tokenService.createToken({
     userId,
     stationId,
@@ -56,7 +55,7 @@ export const joinQueue = async (userId, stationId, fuelType) => {
 };
 
 
-// 🔹 LEAVE QUEUE
+// LEAVE QUEUE
 export const leaveQueue = async (userId) => {
   const entry = await QueueEntry.findOne({
     userId,
@@ -70,21 +69,26 @@ export const leaveQueue = async (userId) => {
 
   // shift positions
   await QueueEntry.updateMany(
-    {
-      queueId: entry.queueId,
-      position: { $gt: entry.position },
-    },
+    { queueId: entry.queueId, position: { $gt: entry.position } },
     { $inc: { position: -1 } }
   );
 
-  // 🔥 invalidate token
+  // recalculate EWT for remaining active entries
+  const queue = await Queue.findById(entry.queueId);
+  const remaining = await QueueEntry.find({ queueId: entry.queueId, status: "active" });
+  for (const e of remaining) {
+    e.estimatedWaitMinutes = (e.position - 1) * queue.serveTimeMinutes;
+    await e.save();
+  }
+
+  // invalidate token
   await tokenService.invalidateToken(entry._id);
 
   return { message: "Left queue" };
 };
 
 
-// 🔹 MY STATUS (POLLING)
+// MY STATUS (POLLING)
 export const getMyStatus = async (userId) => {
   const entry = await QueueEntry.findOne({
     userId,
@@ -95,7 +99,7 @@ export const getMyStatus = async (userId) => {
 
   const queue = await Queue.findById(entry.queueId);
 
-  const token = await tokenService.getTokenByEntry(entry._id);
+  const token = await Token.findOne({ queueEntryId: entry._id });
 
   return {
     active: true,
@@ -126,7 +130,7 @@ export const getMyStatus = async (userId) => {
 
 // ================= ADMIN FUNCTIONS ================= //
 
-// 🔹 SERVE USER
+// SERVE USER
 export const serveUser = async (stationId, fuelType, entryId) => {
   const entry = await QueueEntry.findById(entryId);
 
@@ -146,7 +150,7 @@ export const serveUser = async (stationId, fuelType, entryId) => {
 };
 
 
-// 🔹 REMOVE NO SHOW
+// REMOVE NO SHOW
 export const removeNoShow = async (stationId, fuelType, entryId) => {
   const entry = await QueueEntry.findById(entryId);
 
@@ -165,7 +169,7 @@ export const removeNoShow = async (stationId, fuelType, entryId) => {
 };
 
 
-// 🔹 PAUSE QUEUE
+// PAUSE QUEUE
 export const pauseQueue = async (stationId, fuelType) => {
   await Queue.findOneAndUpdate(
     { stationId, fuelType },
@@ -174,7 +178,7 @@ export const pauseQueue = async (stationId, fuelType) => {
 };
 
 
-// 🔹 RESUME QUEUE
+// RESUME QUEUE
 export const resumeQueue = async (stationId, fuelType) => {
   await Queue.findOneAndUpdate(
     { stationId, fuelType },
@@ -183,7 +187,7 @@ export const resumeQueue = async (stationId, fuelType) => {
 };
 
 
-// 🔹 SET FUEL AVAILABILITY
+// SET FUEL AVAILABILITY
 export const setFuelAvailability = async (stationId, fuelType, fuelAvailable) => {
   await Queue.findOneAndUpdate(
     { stationId, fuelType },
@@ -192,7 +196,7 @@ export const setFuelAvailability = async (stationId, fuelType, fuelAvailable) =>
 };
 
 
-// 🔹 SET SERVE TIME
+// SET SERVE TIME
 export const setServeTime = async (stationId, fuelType, minutes) => {
   const queue = await Queue.findOneAndUpdate(
     { stationId, fuelType },
@@ -214,7 +218,7 @@ export const setServeTime = async (stationId, fuelType, minutes) => {
 };
 
 
-// 🔹 GET QUEUE LIST (ADMIN)
+// GET QUEUE LIST (ADMIN)
 export const getQueueList = async (stationId, fuelType) => {
   const queue = await Queue.findOne({ stationId, fuelType });
 
@@ -223,11 +227,20 @@ export const getQueueList = async (stationId, fuelType) => {
     status: "active",
   }).sort({ position: 1 });
 
-  return entries;
+  const result = await Promise.all(entries.map(async (entry) => {
+    const token = await Token.findOne({ queueEntryId: entry._id });
+    return {
+      ...entry.toObject(),
+      pinCode: token ? token.pinCode : null,
+      elapsedMinutes: Math.floor((Date.now() - new Date(entry.joinedAt)) / 60000),
+    };
+  }));
+
+  return result;
 };
 
 
-// 🔹 NO SHOW DETECTION
+// NO SHOW DETECTION
 export const runNoShowDetection = () => {
   setInterval(async () => {
     const queues = await Queue.find();

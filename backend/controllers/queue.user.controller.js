@@ -1,36 +1,29 @@
-// TODO: Dev 4
 import * as queueService from "../services/queue.service.js";
 
-export const joinQueue = async (req, res) => {
+export const joinQueue = async (req, res, next) => {
   try {
     const { id, fuelType } = req.params;
-
-    const result = await queueService.joinQueue(
-      req.user.id,
-      id,
-      fuelType
-    );
-
+    const result = await queueService.joinQueue(req.user.id, id, fuelType);
     res.status(201).json(result);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    next(err);
   }
 };
 
-export const leaveQueue = async (req, res) => {
+export const leaveQueue = async (req, res, next) => {
   try {
     const result = await queueService.leaveQueue(req.user.id);
-    res.json(result);
+    res.status(200).json(result);
   } catch (err) {
-    res.status(err.status || 400).json({ message: err.message });
+    next(err);
   }
 };
 
-export const getMyStatus = async (req, res) => {
+export const getMyStatus = async (req, res, next) => {
   try {
     const result = await queueService.getMyStatus(req.user.id);
-    res.json(result);
+    res.status(200).json(result);
   } catch (err) {
-    res.status(err.status || 400).json({ message: err.message });
+    next(err);
   }
 };
