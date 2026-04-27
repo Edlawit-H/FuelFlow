@@ -1,24 +1,34 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const FuelFlowLanding = () => {
   return (
     <div className="min-h-screen bg-[#f8fafc] font-sans text-[#1e293b]">
    
       <nav className="flex items-center justify-between px-6 md:px-20 py-4 bg-white border-b border-slate-100">
-        <div className="text-xl font-bold text-[#0ea5e9] flex items-center">
+        <Link to="/" className="text-xl font-bold text-[#0ea5e9] flex items-center">
           <span className="text-[#10b981]">FuelFlow</span>
-        </div>
+        </Link>
         <div className="hidden md:flex space-x-8 text-[13px] font-medium text-slate-500">
-          <a href="#" className="hover:text-emerald-500 transition">Solutions</a>
-          <a href="#" className="hover:text-emerald-500 transition">How it Works</a>
-          <a href="#" className="hover:text-emerald-500 transition">Benefits</a>
-          <a href="#" className="hover:text-emerald-500 transition">User Types</a>
+          <a href="#solutions" className="hover:text-emerald-500 transition">Solutions</a>
+          <a href="#how-it-works" className="hover:text-emerald-500 transition">How it Works</a>
+          <a href="#benefits" className="hover:text-emerald-500 transition">Benefits</a>
+          <a href="#user-types" className="hover:text-emerald-500 transition">User Types</a>
         </div>
         <div className="flex items-center space-x-4">
-          <button className="text-[13px] font-medium text-slate-600">Login</button>
-          <button className="bg-[#10b981] text-white px-4 py-2 rounded-md text-[13px] font-semibold hover:bg-emerald-600 transition">
+          <Link
+            to="/login"
+            className="bg-[#14b8a6] text-white px-8 py-2.5 rounded-md text-sm font-bold shadow-sm"
+          >
+            Login
+          </Link>
+          
+          <Link
+            to="/signup"
+            className="bg-[#10b981] text-white px-4 py-2 rounded-md text-[13px] font-semibold hover:bg-emerald-600 transition"
+          >
             Sign Up
-          </button>
+          </Link>
         </div>
       </nav>
 
@@ -35,17 +45,23 @@ const FuelFlowLanding = () => {
           Drivers join fuel queues digitally. Stations manage fuel flow and waiting lists efficiently.
         </p>
         <div className="flex justify-center space-x-4">
-          <button className="bg-[#14b8a6] text-white px-8 py-2.5 rounded-md text-sm font-bold shadow-sm hover:bg-teal-600 transition">
-            Login
-          </button>
-          <button className="bg-white border border-slate-200 text-slate-700 px-8 py-2.5 rounded-md text-sm font-bold shadow-sm hover:bg-slate-50 transition">
+            <Link
+              to="/login"
+              className="bg-[#14b8a6] text-white px-8 py-2.5 rounded-md text-sm font-bold shadow-sm"
+            >
+              Login
+            </Link>
+          <Link
+            to="/signup"
+            className="bg-[#10b981] text-white px-8 py-2.5 rounded-md text-sm font-bold shadow-sm hover:bg-emerald-600 transition"
+          >
             Create Account
-          </button>
+          </Link>
         </div>
       </header>
 
       {/* --- How it Works --- */}
-      <section className="py-20 px-6 md:px-20 bg-[#f1f5f9]/50 border-t border-slate-100">
+      <section id="how-it-works" className="py-20 px-6 md:px-20 bg-[#f1f5f9]/50 border-t border-slate-100">
         <h2 className="text-2xl font-bold text-center mb-16">How it Works</h2>
         <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {[
@@ -65,7 +81,7 @@ const FuelFlowLanding = () => {
       </section>
 
       {/* --- Comprehensive System Overview --- */}
-      <section className="py-24 px-6 md:px-20 bg-white">
+      <section id="solutions" className="py-24 px-6 md:px-20 bg-white">
         <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-16">
           <div className="lg:w-1/2">
             <h2 className="text-2xl font-bold mb-10 text-slate-800">Comprehensive System Overview</h2>
@@ -122,7 +138,7 @@ const FuelFlowLanding = () => {
       </section>
 
       {/* --- Designed for Everyone --- */}
-      <section className="py-24 px-6 md:px-20">
+      <section id="user-types" className="py-24 px-6 md:px-20">
         <h2 className="text-2xl font-bold text-center mb-16">Designed for Everyone</h2>
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {/* Driver Card */}
@@ -153,7 +169,7 @@ const FuelFlowLanding = () => {
       </section>
 
       {/* --- Why FuelFlow? --- */}
-      <section className="py-20 px-6 md:px-20">
+      <section id="benefits" className="py-20 px-6 md:px-20">
         <h2 className="text-2xl font-bold text-center mb-16">Why FuelFlow?</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
           {[
@@ -178,12 +194,30 @@ const FuelFlowLanding = () => {
             Join thousands of stations and drivers already streamlining their fueling experience.
           </p>
           <div className="flex justify-center space-x-4">
-            <button className="bg-white text-[#064e3b] px-10 py-3 rounded-md text-[14px] font-bold hover:bg-slate-100 transition">
+            <Link
+              to="/login"
+              className="bg-white text-[#064e3b] px-10 py-3 rounded-md text-[14px] font-bold hover:bg-slate-100 transition"
+            >
               Login
-            </button>
-            <button className="bg-[#2dd4bf] text-white px-10 py-3 rounded-md text-[14px] font-bold hover:bg-teal-400 transition">
+            </Link>
+            <Link
+              to="/signup"
+              className="bg-[#2dd4bf] text-white px-10 py-3 rounded-md text-[14px] font-bold hover:bg-teal-400 transition"
+            >
               Register
-            </button>
+            </Link>
+            <Link
+              to="/user/dashboard"
+              className="bg-emerald-600 text-white px-8 py-3 rounded-md text-[14px] font-bold hover:bg-emerald-700 transition"
+            >
+              User Dashboard
+            </Link>
+            <Link
+              to="/admin/dashboard"
+              className="bg-slate-900 text-white px-8 py-3 rounded-md text-[14px] font-bold hover:bg-slate-700 transition"
+            >
+              Admin Dashboard
+            </Link>
           </div>
         </div>
       </section>

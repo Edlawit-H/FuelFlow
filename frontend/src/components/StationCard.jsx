@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin } from 'lucide-react';
+import { Fuel, MapPin, Ticket } from 'lucide-react';
 
 const StationCard = ({ name, address, distance, petrolStatus, dieselStatus, onViewStation }) => {
   return (
@@ -19,7 +19,7 @@ const StationCard = ({ name, address, distance, petrolStatus, dieselStatus, onVi
         </span>
       </div>
 
-      {/* Fuel Status Rows - Designed to match your UI kit's small badge look */}
+      {/* Fuel Status Rows */}
       <div className="space-y-2 mt-2">
         <FuelRow type="Petrol" status={petrolStatus} />
         <FuelRow type="Diesel" status={dieselStatus} />
@@ -52,7 +52,11 @@ const FuelRow = ({ type, status }) => {
   return (
     <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
       <div className="flex items-center gap-2">
-        <span className="text-base">{type === 'Petrol' ? '⛽' : '🚛'}</span>
+        {type === 'Petrol' ? (
+          <Fuel size={14} className="text-teal-600" />
+        ) : (
+          <Ticket size={14} className="text-teal-600" />
+        )}
         <span className="text-xs font-black text-slate-600 uppercase tracking-tight">{type}</span>
       </div>
       <span className={`text-[9px] font-black px-2 py-1 rounded-lg border shadow-sm ${statusStyles}`}>

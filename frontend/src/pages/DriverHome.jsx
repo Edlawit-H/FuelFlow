@@ -1,8 +1,11 @@
 import React from 'react';
-import { Search, MapPin, Navigation } from 'lucide-react';
+import { Search, Navigation } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import StationCard from '../components/StationCard';
 
 const DriverHome = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="p-8 bg-slate-50 min-h-screen">
       <header className="flex justify-between items-center mb-8">
@@ -15,6 +18,9 @@ const DriverHome = () => {
           />
         </div>
         <div className="flex gap-3">
+          <Link className="flex items-center gap-2 px-5 py-3 bg-white text-slate-600 rounded-xl font-bold shadow-sm hover:bg-slate-50" to="/profile">
+            Profile
+          </Link>
           <button className="flex items-center gap-2 px-5 py-3 bg-white text-slate-600 rounded-xl font-bold shadow-sm hover:bg-slate-50">
             <Navigation size={18} className="text-teal-500"/> Near Me
           </button>
@@ -31,6 +37,7 @@ const DriverHome = () => {
           distance="0.8 KM"
           petrolStatus="AVAILABLE (4 MIN)"
           dieselStatus="PAUSED"
+          onViewStation={() => navigate('/driver/station/central-plaza')}
         />
         <StationCard 
           name="Northside Hub" 
@@ -38,6 +45,7 @@ const DriverHome = () => {
           distance="2.4 KM"
           petrolStatus="NO FUEL"
           dieselStatus="AVAILABLE (0 MIN)"
+          onViewStation={() => navigate('/driver/station/northside-hub')}
         />
       </div>
     </div>
