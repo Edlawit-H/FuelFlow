@@ -15,11 +15,9 @@ const authenticate = (req, res, next) => {
 
     req.user = { id: decoded.id, role: decoded.role };
     next();
+
   } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      return next(new AppError(401, 'Token expired'));
-    }
-    return next(new AppError(401, 'Invalid token'));
+    return next(new AppError(401, 'Invalid or expired token'));
   }
 };
 
