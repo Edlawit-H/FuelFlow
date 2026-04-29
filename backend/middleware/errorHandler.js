@@ -1,0 +1,12 @@
+export class AppError extends Error {
+  constructor(statusCode, message) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
+
+export const errorHandler = (err, req, res, next) => {
+  res.status(err.statusCode || 500).json({
+    message: err.message || 'Server Error'
+  });
+};
