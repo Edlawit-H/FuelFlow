@@ -24,13 +24,13 @@ app.use('/api/v1/stations/:id/queues/:fuelType', queueAdminRoutes);
 app.use('/api/v1/stations', queueUserRoutes);
 app.use('/api/v1/queue', queueUserRoutes);
 app.use('/api/v1/tokens', tokenRoutes);
-
+app.use("/api/queue", queueRoutes);
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
 app.use(errorHandler);
-app.use("/api/queue", queueRoutes);
+
 
 
 
