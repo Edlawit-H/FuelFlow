@@ -1,2 +1,61 @@
-node_modules/
+# Kiro
+.kiro/
+
+# Environment variables
 .env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Build outputs
+dist/
+build/
+*/dist/
+*/build/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Coverage
+coverage/
+*/coverage/
+.nyc_output/
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+*.tsbuildinfo
+
+# Vite
+frontend/.vite/
+
+# Jest
+jest.config.js.bak
+
+# Misc
+*.pem
+*.key
+*.cert

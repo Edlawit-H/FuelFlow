@@ -2,6 +2,7 @@ import Queue from "../models/Queue.js";
 import QueueEntry from "../models/QueueEntry.js";
 import Token from "../models/Token.js";
 import * as tokenService from "./token.service.js";
+import { AppError } from "../middleware/errorHandler.js";
 
 
 // ================= USER FUNCTIONS ================= //
@@ -13,9 +14,8 @@ export const joinQueue = async (userId, stationId, fuelType) => {
     status: "active",
   });
 
-  if (existing) throw { status: 409, message: "Already in queue" };
+  if (existing) throw new AppError(409, 'Already in queue');
 
-  // single atomic operation — checks fuelAvailable and isPaused in filter
   const queue = await Queue.findOneAndUpdate(
     { stationId, fuelType, fuelAvailable: true, isPaused: false },
     { $inc: { counter: 1 } },
@@ -24,10 +24,10 @@ export const joinQueue = async (userId, stationId, fuelType) => {
 
   if (!queue) {
     const check = await Queue.findOne({ stationId, fuelType });
-    if (!check) throw { status: 404, message: "Queue not found" };
-    if (!check.fuelAvailable) throw { status: 409, message: "Fuel not available" };
-    if (check.isPaused) throw { status: 409, message: "Queue is paused" };
-    throw { status: 409, message: "Cannot join queue" };
+    if (!check) throw new AppError(404, 'Queue not found');
+    if (!check.fuelAvailable) throw new AppError(409, 'Fuel not available');
+    if (check.isPaused) throw new AppError(409, 'Queue is paused');
+    throw new AppError(409, 'Cannot join queue');
   }
 
   const position = queue.counter;
@@ -62,7 +62,7 @@ export const leaveQueue = async (userId) => {
     status: "active",
   });
 
-  if (!entry) throw { status: 404, message: "No active queue" };
+  if (!entry) throw new AppError(404, 'No active queue');
 
   entry.status = "left";
   await entry.save();
@@ -134,7 +134,7 @@ export const getMyStatus = async (userId) => {
 export const serveUser = async (stationId, fuelType, entryId) => {
   const entry = await QueueEntry.findById(entryId);
 
-  if (!entry) throw { status: 404, message: "Entry not found" };
+  if (!entry) throw new AppError(404, 'Entry not found');
 
   entry.status = "served";
   entry.servedAt = new Date();
@@ -154,7 +154,7 @@ export const serveUser = async (stationId, fuelType, entryId) => {
 export const removeNoShow = async (stationId, fuelType, entryId) => {
   const entry = await QueueEntry.findById(entryId);
 
-  if (!entry) throw { status: 404, message: "Entry not found" };
+  if (!entry) throw new AppError(404, 'Entry not found');
 
   entry.status = "no_show";
   await entry.save();
