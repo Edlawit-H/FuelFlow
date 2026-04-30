@@ -1,134 +1,138 @@
-import React from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Globe, ChevronDown } from 'lucide-react';
+import { useLang, LANGUAGES } from '../context/LanguageContext';
 
-const FuelFlowLanding = () => {
+/* All text uses inline style so global CSS cannot override colors */
+
+export default function FuelFlowLanding() {
+  const { t, lang, setLang } = useLang();
+  const [langOpen, setLangOpen] = useState(false);
+  const langRef = useRef(null);
+
+  useEffect(() => {
+    const close = (e) => { if (langRef.current && !langRef.current.contains(e.target)) setLangOpen(false); };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-[#f8fafc] font-sans text-[#1e293b]">
-   
-      <nav className="flex items-center justify-between px-6 md:px-20 py-4 bg-white border-b border-slate-100">
-        <Link to="/" className="text-xl font-bold text-[#0ea5e9] flex items-center">
-          <span className="text-[#10b981]">FuelFlow</span>
-        </Link>
-        <div className="hidden md:flex space-x-8 text-[13px] font-medium text-slate-500">
-          <a href="#solutions" className="hover:text-emerald-500 transition">Solutions</a>
-          <a href="#how-it-works" className="hover:text-emerald-500 transition">How it Works</a>
-          <a href="#benefits" className="hover:text-emerald-500 transition">Benefits</a>
-          <a href="#user-types" className="hover:text-emerald-500 transition">User Types</a>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: 'system-ui, sans-serif', color: '#1e293b' }}>
+
+      {/* ── Navbar ── */}
+      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 80px', background: '#fff', borderBottom: '1px solid #e2e8f0' }}>
+        <Link to="/" style={{ fontSize: '20px', fontWeight: '800', color: '#10b981', textDecoration: 'none' }}>{t.appName}</Link>
+
+        <div style={{ display: 'flex', gap: '32px', fontSize: '13px', fontWeight: '500', color: '#64748b' }}>
+          <a href="#solutions" style={{ color: '#64748b', textDecoration: 'none' }}>{t.solutions}</a>
+          <a href="#how-it-works" style={{ color: '#64748b', textDecoration: 'none' }}>{t.howItWorks}</a>
+          <a href="#benefits" style={{ color: '#64748b', textDecoration: 'none' }}>{t.benefits}</a>
+          <a href="#user-types" style={{ color: '#64748b', textDecoration: 'none' }}>{t.userTypes}</a>
         </div>
-        <div className="flex items-center space-x-4">
-          <Link
-            to="/login"
-            className="bg-[#14b8a6] text-white px-8 py-2.5 rounded-md text-sm font-bold shadow-sm"
-          >
-            Login
-          </Link>
-          
-          <Link
-            to="/signup"
-            className="bg-[#10b981] text-white px-4 py-2 rounded-md text-[13px] font-semibold hover:bg-emerald-600 transition"
-          >
-            Sign Up
-          </Link>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Language Switcher */}
+          <div style={{ position: 'relative' }} ref={langRef}>
+            <button
+              onClick={() => setLangOpen(v => !v)}
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 12px', borderRadius: '8px', border: '2px solid #5eead4', background: '#f0fdfa', color: '#0f766e', fontWeight: '700', fontSize: '13px', cursor: 'pointer' }}
+            >
+              <Globe size={15} />
+              <span>{LANGUAGES[lang].name}</span>
+              <ChevronDown size={13} style={{ transform: langOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+            </button>
+            {langOpen && (
+              <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 6px)', width: '180px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.12)', zIndex: 100, overflow: 'hidden' }}>
+                {Object.values(LANGUAGES).map(l => (
+                  <button key={l.code} onClick={() => { setLang(l.code); setLangOpen(false); }}
+                    style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: lang === l.code ? '#f0fdfa' : '#fff', color: lang === l.code ? '#0f766e' : '#334155', fontWeight: lang === l.code ? '700' : '400', fontSize: '14px', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
+                    <span>{l.name}</span>
+                    <span style={{ fontSize: '10px', color: '#94a3b8' }}>{l.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <Link to="/login" style={{ background: '#14b8a6', color: '#fff', padding: '9px 20px', borderRadius: '6px', fontSize: '14px', fontWeight: '700', textDecoration: 'none' }}>{t.login}</Link>
+          <Link to="/signup" style={{ background: '#10b981', color: '#fff', padding: '9px 16px', borderRadius: '6px', fontSize: '13px', fontWeight: '600', textDecoration: 'none' }}>{t.signUp}</Link>
         </div>
       </nav>
 
-      {/* --- Hero Section --- */}
-      <header className="pt-20 pb-24 text-center px-4">
-        <div className="inline-block bg-slate-100 border border-slate-200 px-3 py-1 rounded-full mb-6">
-          <span className="text-[10px] uppercase tracking-widest font-bold text-slate-400">Fuel Management System</span>
+      {/* ── Hero ── */}
+      <header style={{ padding: '80px 24px 96px', textAlign: 'center' }}>
+        <div style={{ display: 'inline-block', background: '#f1f5f9', border: '1px solid #e2e8f0', padding: '4px 12px', borderRadius: '999px', marginBottom: '24px' }}>
+          <span style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: '700', color: '#94a3b8' }}>Fuel Management System</span>
         </div>
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 tracking-tight text-slate-900">FuelFlow</h1>
-        <p className="text-lg md:text-xl font-semibold text-slate-800 mb-3">
-          A smart system for managing fuel station queues in real time.
-        </p>
-        <p className="text-slate-500 text-sm md:text-base max-w-2xl mx-auto mb-10 leading-relaxed">
-          Drivers join fuel queues digitally. Stations manage fuel flow and waiting lists efficiently.
-        </p>
-        <div className="flex justify-center space-x-4">
-            <Link
-              to="/login"
-              className="bg-[#14b8a6] text-white px-8 py-2.5 rounded-md text-sm font-bold shadow-sm"
-            >
-              Login
-            </Link>
-          <Link
-            to="/signup"
-            className="bg-[#10b981] text-white px-8 py-2.5 rounded-md text-sm font-bold shadow-sm hover:bg-emerald-600 transition"
-          >
-            Create Account
-          </Link>
+        <h1 style={{ fontSize: '56px', fontWeight: '800', color: '#0f172a', margin: '0 0 24px', letterSpacing: '-1px' }}>{t.appName}</h1>
+        <p style={{ fontSize: '20px', fontWeight: '600', color: '#1e293b', margin: '0 0 12px' }}>{t.heroSubtitle}</p>
+        <p style={{ fontSize: '15px', color: '#64748b', maxWidth: '600px', margin: '0 auto 40px', lineHeight: '1.7' }}>{t.heroDesc}</p>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
+          <Link to="/login" style={{ background: '#14b8a6', color: '#fff', padding: '12px 32px', borderRadius: '6px', fontSize: '14px', fontWeight: '700', textDecoration: 'none' }}>{t.login}</Link>
+          <Link to="/signup" style={{ background: '#10b981', color: '#fff', padding: '12px 32px', borderRadius: '6px', fontSize: '14px', fontWeight: '700', textDecoration: 'none' }}>{t.signUp}</Link>
         </div>
       </header>
 
-      {/* --- How it Works --- */}
-      <section id="how-it-works" className="py-20 px-6 md:px-20 bg-[#f1f5f9]/50 border-t border-slate-100">
-        <h2 className="text-2xl font-bold text-center mb-16">How it Works</h2>
-        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+      {/* ── How it Works ── */}
+      <section id="how-it-works" style={{ padding: '80px 80px', background: '#f1f5f9', borderTop: '1px solid #e2e8f0' }}>
+        <h2 style={{ fontSize: '28px', fontWeight: '800', textAlign: 'center', color: '#0f172a', margin: '0 0 64px' }}>{t.howItWorks}</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px', maxWidth: '1100px', margin: '0 auto' }}>
           {[
-            { id: 1, title: "Drivers join queue", desc: "Select a station and join a fuel queue instantly." },
-            { id: 2, title: "Get a PIN code", desc: "Each user receives a unique code for their queue position." },
-            { id: 3, title: "Stations manage flow", desc: "Admins control fuel availability and serve users in order." }
-          ].map((item) => (
-            <div key={item.id} className="bg-white p-8 rounded-lg border border-slate-200 shadow-sm">
-              <div className="bg-[#14b8a6] text-white w-8 h-8 flex items-center justify-center rounded-md text-sm font-bold mb-6">
-                {item.id}
-              </div>
-              <h3 className="font-bold text-slate-900 mb-3">{item.title}</h3>
-              <p className="text-slate-500 text-[13px] leading-relaxed">{item.desc}</p>
+            { id: 1, title: t.step1Title, desc: t.step1Desc },
+            { id: 2, title: t.step2Title, desc: t.step2Desc },
+            { id: 3, title: t.step3Title, desc: t.step3Desc },
+          ].map(item => (
+            <div key={item.id} style={{ background: '#fff', padding: '32px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+              <div style={{ background: '#14b8a6', color: '#fff', width: '32px', height: '32px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '14px', marginBottom: '24px' }}>{item.id}</div>
+              <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#0f172a', margin: '0 0 10px' }}>{item.title}</h3>
+              <p style={{ fontSize: '13px', color: '#64748b', lineHeight: '1.6', margin: 0 }}>{item.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* --- Comprehensive System Overview --- */}
-      <section id="solutions" className="py-24 px-6 md:px-20 bg-white">
-        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-16">
-          <div className="lg:w-1/2">
-            <h2 className="text-2xl font-bold mb-10 text-slate-800">Comprehensive System Overview</h2>
-            <div className="space-y-8">
+      {/* ── System Overview ── */}
+      <section id="solutions" style={{ padding: '96px 80px', background: '#fff' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'flex', flexWrap: 'wrap', gap: '64px', alignItems: 'center' }}>
+          <div style={{ flex: '1 1 400px' }}>
+            <h2 style={{ fontSize: '26px', fontWeight: '800', color: '#1e293b', margin: '0 0 40px' }}>{t.overviewTitle}</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
               {[
-                { label: "Separate Queues", text: "Dedicated management for Petrol and Diesel fuel types to avoid congestion." },
-                { label: "Real-Time Updates", text: "Instant notifications on queue progress and station fuel status." },
-                { label: "PIN-Based Identification", text: "Secure digital tokens for every driver to ensure order integrity." },
-                { label: "Admin Controls", text: "Advanced dashboard for station managers to regulate the flow." }
-              ].map((feature, i) => (
-                <div key={i} className="flex gap-4">
-                  <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-2 shrink-0" />
+                { label: t.feat1Label, text: t.feat1Text },
+                { label: t.feat2Label, text: t.feat2Text },
+                { label: t.feat3Label, text: t.feat3Text },
+                { label: t.feat4Label, text: t.feat4Text },
+              ].map((f, i) => (
+                <div key={i} style={{ display: 'flex', gap: '16px' }}>
+                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#94a3b8', marginTop: '8px', flexShrink: 0 }} />
                   <div>
-                    <h4 className="font-bold text-[15px] text-slate-800">{feature.label}</h4>
-                    <p className="text-slate-500 text-[13px] leading-relaxed">{feature.text}</p>
+                    <h4 style={{ fontSize: '15px', fontWeight: '700', color: '#1e293b', margin: '0 0 4px' }}>{f.label}</h4>
+                    <p style={{ fontSize: '13px', color: '#64748b', lineHeight: '1.6', margin: 0 }}>{f.text}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          {/* Dashboard Mockup */}
-          <div className="lg:w-1/2 w-full bg-[#e2e8f0] p-6 rounded-2xl border border-slate-200">
-            <div className="bg-white rounded-lg shadow-xl overflow-hidden border border-slate-200">
-              <div className="bg-slate-50 px-4 py-3 border-b flex justify-between items-center">
-                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Live Queue: Station #942</span>
-                <span className="bg-blue-100 text-blue-600 text-[9px] px-2 py-0.5 rounded font-bold">ACTIVE</span>
+          {/* Live queue mockup */}
+          <div style={{ flex: '1 1 360px', background: '#e2e8f0', padding: '24px', borderRadius: '20px', border: '1px solid #cbd5e1' }}>
+            <div style={{ background: '#fff', borderRadius: '10px', overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+              <div style={{ background: '#f8fafc', padding: '12px 16px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '10px', fontWeight: '700', color: '#64748b', textTransform: 'uppercase' }}>Live Queue: Station #942</span>
+                <span style={{ background: '#dbeafe', color: '#2563eb', fontSize: '9px', fontWeight: '700', padding: '2px 8px', borderRadius: '4px' }}>ACTIVE</span>
               </div>
-              <div className="p-5 space-y-4">
-                <div className="flex justify-between items-center text-[13px] border-b border-slate-100 pb-3">
-                  <span className="font-semibold text-slate-700">PIN: 4421</span>
-                  <span className="text-[#10b981] font-bold text-[10px] uppercase">Next in line</span>
-                </div>
-                <div className="flex justify-between items-center text-[13px] border-b border-slate-100 pb-3">
-                  <span className="font-medium text-slate-400">PIN: 4422</span>
-                  <span className="text-slate-300 text-[10px]">Waiting</span>
-                </div>
-                <div className="flex justify-between items-center text-[13px] border-b border-slate-100 pb-3">
-                  <span className="font-medium text-slate-400">PIN: 4423</span>
-                  <span className="text-slate-300 text-[10px]">Waiting</span>
-                </div>
-                <div className="pt-4">
-                  <div className="flex justify-between text-[10px] font-bold text-slate-500 mb-2">
-                    <span>Petrol Supply</span>
-                    <span>82%</span>
+              <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {[['4421', 'Next in line', true], ['4422', 'Waiting', false], ['4423', 'Waiting', false]].map(([pin, status, active]) => (
+                  <div key={pin} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
+                    <span style={{ fontSize: '13px', fontWeight: active ? '600' : '400', color: active ? '#334155' : '#94a3b8' }}>PIN: {pin}</span>
+                    <span style={{ fontSize: '10px', fontWeight: '700', color: active ? '#10b981' : '#cbd5e1', textTransform: 'uppercase' }}>{status}</span>
                   </div>
-                  <div className="w-full bg-slate-100 h-1.5 rounded-full">
-                    <div className="bg-[#14b8a6] h-full w-[82%] rounded-full" />
+                ))}
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: '700', color: '#64748b', marginBottom: '8px' }}>
+                    <span>Petrol Supply</span><span>82%</span>
+                  </div>
+                  <div style={{ background: '#f1f5f9', height: '6px', borderRadius: '999px' }}>
+                    <div style={{ background: '#14b8a6', height: '100%', width: '82%', borderRadius: '999px' }} />
                   </div>
                 </div>
               </div>
@@ -137,108 +141,71 @@ const FuelFlowLanding = () => {
         </div>
       </section>
 
-      {/* --- Designed for Everyone --- */}
-      <section id="user-types" className="py-24 px-6 md:px-20">
-        <h2 className="text-2xl font-bold text-center mb-16">Designed for Everyone</h2>
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {/* Driver Card */}
-          <div className="bg-white p-10 rounded-xl border border-slate-100 shadow-sm">
-            <div className="inline-block bg-emerald-50 border border-emerald-100 text-emerald-600 text-[9px] font-bold px-2 py-0.5 rounded uppercase mb-4">For Drivers</div>
-            <h3 className="text-xl font-bold text-slate-800 mb-6">Driver Account</h3>
-            <ul className="space-y-4">
-              {['Join queues remotely', 'Track position in real-time', 'Digital PIN for verification'].map(item => (
-                <li key={item} className="flex items-center text-[13px] text-slate-600">
-                  <span className="text-emerald-400 mr-3 text-lg">•</span> {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-          {/* Admin Card */}
-          <div className="bg-white p-10 rounded-xl border border-slate-100 shadow-sm">
-            <div className="inline-block bg-emerald-50 border border-emerald-100 text-emerald-600 text-[9px] font-bold px-2 py-0.5 rounded uppercase mb-4">For Stations</div>
-            <h3 className="text-xl font-bold text-slate-800 mb-6">Station Admin</h3>
-            <ul className="space-y-4">
-              {['Manage fuel type availability', 'Control queues & waiting lists', 'Serve users in digital order'].map(item => (
-                <li key={item} className="flex items-center text-[13px] text-slate-600">
-                  <span className="text-emerald-400 mr-3 text-lg">•</span> {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* --- Why FuelFlow? --- */}
-      <section id="benefits" className="py-20 px-6 md:px-20">
-        <h2 className="text-2xl font-bold text-center mb-16">Why FuelFlow?</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
+      {/* ── Designed for Everyone ── */}
+      <section id="user-types" style={{ padding: '96px 80px' }}>
+        <h2 style={{ fontSize: '28px', fontWeight: '800', textAlign: 'center', color: '#0f172a', margin: '0 0 64px' }}>{t.designedTitle}</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px', maxWidth: '900px', margin: '0 auto' }}>
           {[
-            { t: "Eliminate Confusion", d: "Reduces waiting confusion with clear digital tracking." },
-            { t: "Organized Flow", d: "Organizes fuel queues separately per fuel type." },
-            { t: "Safety First", d: "Prevents overcrowding at the station premises." },
-            { t: "Predictable Logic", d: "Makes station operations predictable and efficient." }
-          ].map((item, i) => (
-            <div key={i} className="bg-white p-6 rounded-lg border border-slate-200 hover:border-emerald-200 transition">
-              <h4 className="font-bold text-[14px] text-slate-800 mb-2">{item.t}</h4>
-              <p className="text-slate-500 text-[12px] leading-relaxed">{item.d}</p>
+            { badge: t.forDrivers, title: t.driverAccountTitle, features: [t.driverFeature1, t.driverFeature2, t.driverFeature3] },
+            { badge: t.forStations, title: t.adminAccountTitle, features: [t.adminFeature1, t.adminFeature2, t.adminFeature3] },
+          ].map((card, i) => (
+            <div key={i} style={{ background: '#fff', padding: '40px', borderRadius: '16px', border: '1px solid #f1f5f9', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+              <div style={{ display: 'inline-block', background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#059669', fontSize: '9px', fontWeight: '700', padding: '2px 8px', borderRadius: '4px', textTransform: 'uppercase', marginBottom: '16px' }}>{card.badge}</div>
+              <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', margin: '0 0 24px' }}>{card.title}</h3>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {card.features.map(f => (
+                  <li key={f} style={{ display: 'flex', alignItems: 'center', fontSize: '13px', color: '#475569' }}>
+                    <span style={{ color: '#34d399', marginRight: '12px', fontSize: '18px' }}>•</span>{f}
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>
       </section>
 
-      {/* --- CTA Section --- */}
-      <section className="px-6 md:px-10 pb-20">
-        <div className="bg-[#064e3b] rounded-[40px] py-20 px-6 text-center text-white">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Start using FuelFlow today</h2>
-          <p className="text-emerald-100/70 text-[15px] mb-10 max-w-xl mx-auto">
-            Join thousands of stations and drivers already streamlining their fueling experience.
-          </p>
-          <div className="flex justify-center space-x-4">
-            <Link
-              to="/login"
-              className="bg-white text-[#064e3b] px-10 py-3 rounded-md text-[14px] font-bold hover:bg-slate-100 transition"
-            >
-              Login
-            </Link>
-            <Link
-              to="/signup"
-              className="bg-[#2dd4bf] text-white px-10 py-3 rounded-md text-[14px] font-bold hover:bg-teal-400 transition"
-            >
-              Register
-            </Link>
-            <Link
-              to="/user/dashboard"
-              className="bg-emerald-600 text-white px-8 py-3 rounded-md text-[14px] font-bold hover:bg-emerald-700 transition"
-            >
-              User Dashboard
-            </Link>
-            <Link
-              to="/admin/dashboard"
-              className="bg-slate-900 text-white px-8 py-3 rounded-md text-[14px] font-bold hover:bg-slate-700 transition"
-            >
-              Admin Dashboard
-            </Link>
+      {/* ── Why FuelFlow ── */}
+      <section id="benefits" style={{ padding: '80px 80px' }}>
+        <h2 style={{ fontSize: '28px', fontWeight: '800', textAlign: 'center', color: '#0f172a', margin: '0 0 64px' }}>{t.whyTitle}</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', maxWidth: '1100px', margin: '0 auto' }}>
+          {[
+            { title: t.why1Title, desc: t.why1Desc },
+            { title: t.why2Title, desc: t.why2Desc },
+            { title: t.why3Title, desc: t.why3Desc },
+            { title: t.why4Title, desc: t.why4Desc },
+          ].map((item, i) => (
+            <div key={i} style={{ background: '#fff', padding: '24px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+              <h4 style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b', margin: '0 0 8px' }}>{item.title}</h4>
+              <p style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.6', margin: 0 }}>{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <section style={{ padding: '0 40px 80px' }}>
+        <div style={{ background: '#064e3b', borderRadius: '40px', padding: '80px 24px', textAlign: 'center' }}>
+          <h2 style={{ fontSize: '36px', fontWeight: '800', color: '#fff', margin: '0 0 24px' }}>{t.ctaTitle}</h2>
+          <p style={{ fontSize: '15px', color: 'rgba(209,250,229,0.8)', maxWidth: '500px', margin: '0 auto 40px', lineHeight: '1.7' }}>{t.ctaDesc}</p>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
+            <Link to="/login" style={{ background: '#fff', color: '#064e3b', padding: '12px 40px', borderRadius: '6px', fontSize: '14px', fontWeight: '700', textDecoration: 'none' }}>{t.login}</Link>
+            <Link to="/signup" style={{ background: '#2dd4bf', color: '#fff', padding: '12px 40px', borderRadius: '6px', fontSize: '14px', fontWeight: '700', textDecoration: 'none' }}>{t.signUp}</Link>
           </div>
         </div>
       </section>
 
-      {/* --- Footer --- */}
-      <footer className="px-6 md:px-20 py-10 border-t border-slate-200">
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-6 md:mb-0">
-            <div className="font-bold text-[#10b981] text-lg mb-1">FuelFlow</div>
-            <p className="text-slate-400 text-[11px]">© 2024 FuelFlow Fuel Management. All rights reserved.</p>
-          </div>
-          <div className="flex space-x-8 text-slate-400 text-[11px] font-medium">
-            <a href="#" className="hover:text-emerald-500">Privacy Policy</a>
-            <a href="#" className="hover:text-emerald-500">Terms of Service</a>
-            <a href="#" className="hover:text-emerald-500">Contact</a>
-            <a href="#" className="hover:text-emerald-500">Support</a>
-          </div>
+      {/* ── Footer ── */}
+      <footer style={{ padding: '40px 80px', borderTop: '1px solid #e2e8f0', background: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '24px' }}>
+        <div>
+          <div style={{ fontWeight: '700', color: '#10b981', fontSize: '18px', marginBottom: '4px' }}>{t.appName}</div>
+          <p style={{ fontSize: '11px', color: '#94a3b8', margin: 0 }}>{t.footerCopy}</p>
+        </div>
+        <div style={{ display: 'flex', gap: '32px', fontSize: '11px', fontWeight: '500' }}>
+          {[t.privacyPolicy, t.termsOfService, t.contact, t.support].map(label => (
+            <a key={label} href="#" style={{ color: '#94a3b8', textDecoration: 'none' }}>{label}</a>
+          ))}
         </div>
       </footer>
     </div>
   );
-};
-
-export default FuelFlowLanding;
+}

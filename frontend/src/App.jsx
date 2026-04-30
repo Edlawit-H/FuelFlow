@@ -7,23 +7,23 @@ import UserDashboard from './pages/UserDashboard';
 
 // Driver Pages
 import DriverHome from './pages/DriverHome';
-import DriverStation from './pages/DriverStation'; // From image_d9866e
-
-import MyQueue from './pages/MyQueue';       
-    // From image_d98a4a
+import DriverStation from './pages/DriverStation';
+import MyQueue from './pages/MyQueue';
+import Profile from './pages/Profile';
 
 // Admin Pages
-import AdminDashboard from './pages/AdminDashboard'; // From image_d995d1
-import QueueAdmin from './pages/QueueAdmin';         // From image_d98978
-import AdminProfile from './pages/AdminProfile';     // From image_d98d54
-import Profile from './pages/Profile';
+import AdminDashboard from './pages/AdminDashboard';
+import QueueAdmin from './pages/QueueAdmin';
+import AdminProfile from './pages/AdminProfile';
+import TokenValidation from './pages/TokenValidation';
+import CreateStation from './pages/CreateStation';
 
 import './App.css';
 
 function App() {
   return (
     <Routes>
-      {/* 1. Public Entry */}
+      {/* Public */}
       <Route path="/" element={<FuelFlowLanding />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/LoginPage" element={<LoginPage />} />
@@ -31,7 +31,7 @@ function App() {
       <Route path="/signup" element={<RegisterPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-      {/* 2. Driver Flow (Mobile Styled) */}
+      {/* Driver */}
       <Route path="/user/dashboard" element={<UserDashboard />} />
       <Route path="/driver-home" element={<UserDashboard />} />
       <Route path="/driver" element={<DriverHome />} />
@@ -40,10 +40,13 @@ function App() {
       <Route path="/my-queue" element={<MyQueue />} />
       <Route path="/profile" element={<Profile />} />
 
-      {/* 3. Admin Flow (Desktop Styled with Sidebar) */}
+      {/* Admin */}
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
       <Route path="/admin/manage-queue" element={<QueueAdmin />} />
       <Route path="/admin/profile" element={<AdminProfile />} />
+      <Route path="/admin/token-validation" element={<TokenValidation />} />
+      <Route path="/admin/create-station" element={<CreateStation />} />
+
       <Route path="*" element={<FuelFlowLanding />} />
     </Routes>
   );

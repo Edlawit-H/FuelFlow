@@ -1,7 +1,9 @@
 import React from 'react';
 import { LayoutDashboard, Fuel, Users, Navigation, User, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar = ({ activePage, setPage }) => {
+  const navigate = useNavigate();
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20}/> },
     { id: 'stations', label: 'Stations', icon: <Fuel size={20}/> },
@@ -33,7 +35,10 @@ const Sidebar = ({ activePage, setPage }) => {
       </nav>
 
       <div className="p-4 border-t border-slate-50">
-        <button className="w-full flex items-center gap-3 px-4 py-3 text-red-400 font-semibold hover:bg-red-50 rounded-xl transition-all">
+        <button
+          onClick={() => navigate('/login')}
+          className="w-full flex items-center gap-3 px-4 py-3 text-red-400 font-semibold hover:bg-red-50 rounded-xl transition-all"
+        >
           <LogOut size={20}/> Logout
         </button>
       </div>
