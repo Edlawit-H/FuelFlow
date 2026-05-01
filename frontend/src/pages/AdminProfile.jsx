@@ -1,16 +1,13 @@
 import { useState } from 'react';
-import { Camera, Save, CheckCircle2, LogOut, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Camera, Save, CheckCircle2 } from 'lucide-react';
 import { useLang } from '../context/LanguageContext';
-import { useAuth } from '../context/AuthContext';
+import AdminLayout from '../components/AdminLayout';
 
 const AdminProfile = () => {
-  const navigate = useNavigate();
   const { t } = useLang();
-  const { logout } = useAuth();
   const [stationName, setStationName] = useState('Central Metro Station');
-  const [contact, setContact] = useState('+1 234 567 890');
-  const [address, setAddress] = useState('123 Energy Way, Downtown District, Metropolis');
+  const [contact, setContact] = useState('+251 900 000 001');
+  const [address, setAddress] = useState('123 Energy Way, Downtown District');
   const [saved, setSaved] = useState(false);
 
   const handleUpdate = () => {
@@ -19,91 +16,81 @@ const AdminProfile = () => {
   };
 
   return (
-    <div className="p-8 max-w-4xl">
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate(-1)}
-            className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 transition text-slate-500"
-            aria-label="Go back"
-          >
-            <ArrowLeft size={18} />
-          </button>
-          <h1 className="text-2xl font-bold text-slate-900">Station Profile</h1>
+    <AdminLayout title="Station Profile" backTo="/admin/dashboard" backLabel="Back to Dashboard">
+      <div className="p-6 max-w-2xl">
+        <div className="mb-6">
+          <h1 className="text-lg font-bold text-slate-100">Station Profile</h1>
+          <p className="text-sm text-slate-500 mt-0.5">Manage your station's public information</p>
         </div>
-        <button
-          onClick={() => { logout(); navigate('/login'); }}
-          className="flex items-center gap-2 text-red-400 hover:text-red-600 font-semibold text-sm transition"
-        >
-          <LogOut size={16} /> {t.logout}
-        </button>
-      </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 p-8 space-y-8">
-        {/* Profile Pic Section */}
-        <div className="flex items-center gap-6">
-          <div className="w-24 h-24 bg-slate-100 rounded-2xl flex items-center justify-center relative border-2 border-dashed border-slate-200">
-            <Camera className="text-slate-400" />
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+          {/* Banner upload */}
+          <div className="flex items-center gap-5">
+            <div className="w-20 h-20 bg-slate-800 rounded-2xl flex items-center justify-center relative border-2 border-dashed border-slate-700">
+              <Camera className="text-slate-500" size={22} />
+              <button
+                type="button"
+                className="absolute -bottom-2 -right-2 bg-teal-600 text-white p-1.5 rounded-lg border-2 border-slate-900"
+                aria-label="Upload station banner"
+              >
+                <Save size={12} />
+              </button>
+            </div>
+            <div>
+              <p className="font-semibold text-slate-200 text-sm">Station Banner</p>
+              <p className="text-xs text-slate-500 mt-0.5">Upload a photo of your station entrance.</p>
+            </div>
+          </div>
+
+          {/* Fields */}
+          <div className="grid md:grid-cols-2 gap-5">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Station Name</label>
+              <input
+                type="text"
+                value={stationName}
+                onChange={(e) => setStationName(e.target.value)}
+                className="w-full bg-slate-800 border border-slate-700 text-slate-100 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Contact Number</label>
+              <input
+                type="text"
+                value={contact}
+                onChange={(e) => setContact(e.target.value)}
+                className="w-full bg-slate-800 border border-slate-700 text-slate-100 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition"
+              />
+            </div>
+            <div className="md:col-span-2 space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Full Address</label>
+              <textarea
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                rows={3}
+                className="w-full bg-slate-800 border border-slate-700 text-slate-100 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition resize-none"
+              />
+            </div>
+          </div>
+
+          {saved && (
+            <div className="flex items-center gap-2 text-emerald-400 text-sm font-semibold">
+              <CheckCircle2 size={16} /> Profile updated successfully
+            </div>
+          )}
+
+          <div className="flex justify-end pt-2">
             <button
               type="button"
-              className="absolute -bottom-2 -right-2 bg-teal-600 text-white p-1.5 rounded-lg border-2 border-white"
-              aria-label="Upload station banner"
+              onClick={handleUpdate}
+              className="bg-teal-600 hover:bg-teal-500 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition"
             >
-              <Save size={14} />
+              {t.updateProfile || 'Update Profile'}
             </button>
           </div>
-          <div>
-            <h3 className="font-bold text-slate-800">Station Banner</h3>
-            <p className="text-xs text-slate-400">Upload a high-quality photo of your station entrance.</p>
-          </div>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase">Station Name</label>
-            <input
-              type="text"
-              className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-teal-500/20 outline-none transition text-sm"
-              value={stationName}
-              onChange={(e) => setStationName(e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase">Contact Number</label>
-            <input
-              type="text"
-              className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-teal-500/20 outline-none transition text-sm"
-              value={contact}
-              onChange={(e) => setContact(e.target.value)}
-            />
-          </div>
-          <div className="md:col-span-2 space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase">Full Address</label>
-            <textarea
-              className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-teal-500/20 outline-none transition h-24 text-sm"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-            />
-          </div>
-        </div>
-
-        {saved && (
-          <div className="flex items-center gap-2 text-emerald-600 text-sm font-semibold">
-            <CheckCircle2 size={16} /> Profile updated successfully
-          </div>
-        )}
-
-        <div className="flex justify-end pt-4">
-          <button
-            type="button"
-            onClick={handleUpdate}
-            className="bg-[#14b8a6] text-white px-8 py-3 rounded-xl font-bold hover:bg-teal-600 transition"
-          >
-            {t.updateProfile}
-          </button>
         </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

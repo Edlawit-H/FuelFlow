@@ -16,7 +16,15 @@ async function request(method, path, body) {
   });
 
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+
+  if (!res.ok) {
+    // 401 — token expired or invalid, clear it so the app redirects to login
+    if (res.status === 401) {
+      localStorage.removeItem('ff_token');
+    }
+    throw new Error(data.error || `Request failed (${res.status})`);
+  }
+
   return data;
 }
 
@@ -65,4 +73,46 @@ export const api = {
   // Tokens
   validateToken: (pinCode, stationId) =>
     request('POST', '/tokens/validate', { pinCode, stationId }),
+
+  // ─── AI Module ───────────────────────────────────────────────────────────
+  aiRecommendations: (params = {}) => {
+    const q = new URLSearchParams(params).toString();
+    return request('GET', `/ai/recommendations${q ? '?' + q : ''}`);
+  },
+  aiTravelSuggestions: (params = {}) => {
+    const q = new URLSearchParams(params).toString();
+    return request('GET', `/ai/travel-suggestions${q ? '?' + q : ''}`);
+  },
+  aiFuelConsumption: (params = {}) => {
+    const q = new URLSearchParams(params).toString();
+    return request('GET', `/ai/fuel-consumption${q ? '?' + q : ''}`);
+  },
+  aiShortageRisk: (stationId, fuelType) =>
+    request('GET', `/ai/stations/${stationId}/fuel/${fuelType}/shortage-risk`),
+  aiDemandForecast: (stationId, fuelType) =>
+    request('GET', `/ai/stations/${stationId}/fuel/${fuelType}/demand-forecast`),
+  aiCongestion: (stationId, fuelType) =>
+    request('GET', `/ai/stations/${stationId}/fuel/${fuelType}/congestion`),
+
+  // ─── Analytics ───────────────────────────────────────────────────────────
+  getStationAnalytics: (stationId, days = 7) =>
+    request('GET', `/analytics/stations/${stationId}?days=${days}`),
+  getGlobalAnalytics: (days = 7) =>
+    request('GET', `/analytics/global?days=${days}`),
+  getPeakHours: (stationId, fuelType, days = 7) =>
+    request('GET', `/analytics/stations/${stationId}/fuel/${fuelType}/peak-hours?days=${days}`),
+
+  // ─── Reservations ────────────────────────────────────────────────────────
+  createReservation: (body) => request('POST', '/reservations', body),
+  getMyReservations: () => request('GET', '/reservations/my'),
+  cancelReservation: (id) => request('DELETE', `/reservations/${id}`),
+  getAvailableSlots: (stationId, fuelType, date) =>
+    request('GET', `/reservations/slots/${stationId}/${fuelType}?date=${date}`),
+  getStationReservations: (stationId, date) =>
+    request('GET', `/reservations/station/${stationId}${date ? '?date=' + date : ''}`),
+
+  // ─── Alerts ──────────────────────────────────────────────────────────────
+  getMyAlerts: () => request('GET', '/alerts'),
+  markAllAlertsRead: () => request('PATCH', '/alerts/read-all'),
+  markAlertRead: (id) => request('PATCH', `/alerts/${id}/read`),
 };

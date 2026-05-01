@@ -2,7 +2,9 @@ import Queue from "../models/Queue.js";
 import QueueEntry from "../models/QueueEntry.js";
 import Token from "../models/Token.js";
 import * as tokenService from "./token.service.js";
+import * as analyticsService from "./analytics.service.js";
 import { AppError } from "../middleware/errorHandler.js";
+import { io } from "../app.js";
 
 
 // ================= USER FUNCTIONS ================= //
@@ -51,6 +53,27 @@ export const joinQueue = async (userId, stationId, fuelType) => {
     joinedAt: entry.joinedAt,
   });
 
+  // Analytics recording (non-blocking)
+  analyticsService.recordJoin(stationId, fuelType, estimatedWaitMinutes).catch(() => {});
+
+  // WebSocket: broadcast queue update to station room
+  try {
+    io.to(`station:${stationId}`).emit('queue-update', {
+      stationId,
+      fuelType,
+      queueLength: queue.counter,
+      event: 'join',
+    });
+    // Also notify the joining user directly
+    io.to(`user:${userId}`).emit('queue-update', {
+      stationId,
+      fuelType,
+      event: 'joined',
+      position,
+      estimatedWaitMinutes,
+    });
+  } catch { /* non-critical */ }
+
   return { entry, token };
 };
 
@@ -83,6 +106,15 @@ export const leaveQueue = async (userId) => {
 
   // invalidate token
   await tokenService.invalidateToken(entry._id);
+
+  // WebSocket: broadcast queue update
+  try {
+    io.to(`station:${entry.stationId}`).emit('queue-update', {
+      stationId: entry.stationId,
+      fuelType: entry.fuelType,
+      event: 'leave',
+    });
+  } catch { /* non-critical */ }
 
   return { message: "Left queue" };
 };
@@ -136,6 +168,10 @@ export const serveUser = async (stationId, fuelType, entryId) => {
 
   if (!entry) throw new AppError(404, 'Entry not found');
 
+  const waitMinutes = entry.joinedAt
+    ? Math.floor((Date.now() - new Date(entry.joinedAt)) / 60000)
+    : 0;
+
   entry.status = "served";
   entry.servedAt = new Date();
   await entry.save();
@@ -147,6 +183,32 @@ export const serveUser = async (stationId, fuelType, entryId) => {
     },
     { $inc: { position: -1 } }
   );
+
+  // Analytics
+  analyticsService.recordServe(stationId, fuelType, waitMinutes).catch(() => {});
+
+  // Recalculate EWT for remaining entries and emit to each user's room
+  const remaining = await QueueEntry.find({ queueId: entry.queueId, status: 'active' }).sort({ position: 1 });
+  const queue = await Queue.findById(entry.queueId);
+  for (const e of remaining) {
+    e.estimatedWaitMinutes = (e.position - 1) * (queue?.serveTimeMinutes || 5);
+    await e.save();
+    // Push directly to the driver's personal room
+    try {
+      io.to(`user:${e.userId}`).emit('queue-update', {
+        stationId,
+        fuelType,
+        event: 'position_update',
+        position: e.position,
+        estimatedWaitMinutes: e.estimatedWaitMinutes,
+      });
+    } catch { /* non-critical */ }
+  }
+
+  // WebSocket: broadcast to station room
+  try {
+    io.to(`station:${stationId}`).emit('queue-update', { stationId, fuelType, event: 'serve' });
+  } catch { /* non-critical */ }
 };
 
 
@@ -166,33 +228,41 @@ export const removeNoShow = async (stationId, fuelType, entryId) => {
     },
     { $inc: { position: -1 } }
   );
+
+  // Analytics
+  analyticsService.recordNoShow(stationId, fuelType).catch(() => {});
+
+  // WebSocket
+  try {
+    io.to(`station:${stationId}`).emit('queue-update', { stationId, fuelType, event: 'no_show' });
+  } catch { /* non-critical */ }
 };
 
 
 // PAUSE QUEUE
 export const pauseQueue = async (stationId, fuelType) => {
-  await Queue.findOneAndUpdate(
-    { stationId, fuelType },
-    { isPaused: true }
-  );
+  await Queue.findOneAndUpdate({ stationId, fuelType }, { isPaused: true });
+  try {
+    io.to(`station:${stationId}`).emit('queue-update', { stationId, fuelType, event: 'pause' });
+  } catch { /* non-critical */ }
 };
 
 
 // RESUME QUEUE
 export const resumeQueue = async (stationId, fuelType) => {
-  await Queue.findOneAndUpdate(
-    { stationId, fuelType },
-    { isPaused: false }
-  );
+  await Queue.findOneAndUpdate({ stationId, fuelType }, { isPaused: false });
+  try {
+    io.to(`station:${stationId}`).emit('queue-update', { stationId, fuelType, event: 'resume' });
+  } catch { /* non-critical */ }
 };
 
 
 // SET FUEL AVAILABILITY
 export const setFuelAvailability = async (stationId, fuelType, fuelAvailable) => {
-  await Queue.findOneAndUpdate(
-    { stationId, fuelType },
-    { fuelAvailable }
-  );
+  await Queue.findOneAndUpdate({ stationId, fuelType }, { fuelAvailable });
+  try {
+    io.to(`station:${stationId}`).emit('queue-update', { stationId, fuelType, event: 'fuel_availability', fuelAvailable });
+  } catch { /* non-critical */ }
 };
 
 

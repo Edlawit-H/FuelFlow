@@ -42,6 +42,25 @@ const am = {
   adminDashboard: "የአስተዳዳሪ ዳሽቦርድ", activeSession: "ንቁ ክፍለ ጊዜዎች",
   backToHome: "ወደ መነሻ ተመለስ", saveChanges: "ለውጦችን አስቀምጥ", updateProfile: "መገለጫ አዘምን",
   pollingLive: "ቀጥታ ዝማኔ", viewStation: "ጣቢያ ይመልከቱ",
+  // Admin control center
+  serve: "አስተናግድ", noShow: "አልቀረበም", removeUser: "አስወግድ", serveTime: "የአገልግሎት ጊዜ",
+  position: "ቦታ", eta: "የሚጠበቅ ጊዜ", pin: "ፒን", elapsed: "ያለፈ ጊዜ",
+  fuelAvailable: "ነዳጅ አለ", noFuel: "ነዳጅ የለም", queueActive: "ወረፋ ንቁ", queuePaused: "ወረፋ ቆሟል",
+  congestionLow: "ዝቅተኛ ጭናነት", congestionMed: "መካከለኛ ጭናነት", congestionHigh: "ከፍተኛ ጭናነት",
+  liveQueue: "ቀጥታ ወረፋ", stationControl: "የጣቢያ ቁጥጥር", analyticsTitle: "ትንታኔ",
+  alertsTitle: "ማስጠንቀቂያዎች", efficiency: "ብቃት", peakHour: "ከፍተኛ ሰዓት",
+  totalServed: "ጠቅላላ ያስተናገደ", totalJoins: "ጠቅላላ የተቀላቀለ", avgWait: "አማካይ ጠበቃ",
+  vehiclesInQueue: "ተሽከርካሪዎች በወረፋ", adjustServeTime: "የአገልግሎት ጊዜ አስተካክል",
+  confirmServe: "ለማስተናገድ ያረጋግጡ", confirmNoShow: "ለ'አልቀረበም' ያረጋግጡ",
+  wsConnected: "ቀጥታ ግንኙነት", wsDisconnected: "ግንኙነት ተቋርጧል",
+  // Reservation
+  reserveSlot: "ጊዜ ቦታ ያስይዙ", myReservations: "የኔ ቦታዎች", cancelReservation: "ቦታ ሰርዝ",
+  slotFull: "ሞልቷል", slotsLeft: "ቦታ ቀርቷል", confirmReservation: "ቦታ አረጋግጥ",
+  // Map
+  mapView: "የካርታ እይታ", liveMap: "ቀጥታ ካርታ",
+  // AI
+  aiInsights: "AI ትንታኔ", shortageRisk: "የነዳጅ እጥረት ስጋት", demandForecast: "የፍላጎት ትንበያ",
+  travelSuggestions: "የጉዞ ምክሮች", fuelEstimator: "የነዳጅ ግምት",
 };
 
 const en = {
@@ -86,6 +105,25 @@ const en = {
   adminDashboard: "Admin Dashboard", activeSession: "Current Active Sessions",
   backToHome: "Back to Home", saveChanges: "Save Changes", updateProfile: "Update Profile",
   pollingLive: "Live Updates", viewStation: "View Station",
+  // Admin control center
+  serve: "Serve", noShow: "No Show", removeUser: "Remove", serveTime: "Serve Time",
+  position: "Position", eta: "ETA", pin: "PIN", elapsed: "Elapsed",
+  fuelAvailable: "Fuel Available", noFuel: "No Fuel", queueActive: "Queue Active", queuePaused: "Queue Paused",
+  congestionLow: "Low Congestion", congestionMed: "Medium Congestion", congestionHigh: "High Congestion",
+  liveQueue: "Live Queue", stationControl: "Station Control", analyticsTitle: "Analytics",
+  alertsTitle: "Alerts", efficiency: "Efficiency", peakHour: "Peak Hour",
+  totalServed: "Total Served", totalJoins: "Total Joins", avgWait: "Avg Wait",
+  vehiclesInQueue: "Vehicles in Queue", adjustServeTime: "Adjust Serve Time",
+  confirmServe: "Confirm serve this driver?", confirmNoShow: "Mark as no-show?",
+  wsConnected: "Live Connected", wsDisconnected: "Disconnected",
+  // Reservation
+  reserveSlot: "Reserve a Slot", myReservations: "My Reservations", cancelReservation: "Cancel",
+  slotFull: "Full", slotsLeft: "left", confirmReservation: "Confirm Reservation",
+  // Map
+  mapView: "Map View", liveMap: "Live Station Map",
+  // AI
+  aiInsights: "AI Insights", shortageRisk: "Shortage Risk", demandForecast: "Demand Forecast",
+  travelSuggestions: "Travel Suggestions", fuelEstimator: "Fuel Estimator",
 };
 
 const om = {
@@ -130,6 +168,21 @@ const om = {
   adminDashboard: "Gabatee Bulchaa", activeSession: "Waltajjii Hojii Jiran",
   backToHome: "Gara Manaatti Deebi", saveChanges: "Jijjiirama Kuusi", updateProfile: "Profaayilii Haaromsi",
   pollingLive: "Haaromsa Kallattii", viewStation: "Teessoo Ilaali",
+  serve: "Tajaajili", noShow: "Hin Dhiyanne", removeUser: "Haquu", serveTime: "Yeroo Tajaajilaa",
+  position: "Bakka", eta: "Yeroo Eeggannaa", pin: "PIN", elapsed: "Yeroo Darbe",
+  fuelAvailable: "Bobaa Jira", noFuel: "Bobaa Hin Jiru", queueActive: "Tarree Hojjechaa", queuePaused: "Tarree Dhaabatee",
+  congestionLow: "Cufamuu Gadi", congestionMed: "Cufamuu Giddugaleessa", congestionHigh: "Cufamuu Olaanaa",
+  liveQueue: "Tarree Kallattii", stationControl: "Toannoo Teessoo", analyticsTitle: "Xiinxala",
+  alertsTitle: "Beeksisota", efficiency: "Danda'ama", peakHour: "Yeroo Olaanaa",
+  totalServed: "Waliigala Tajaajilame", totalJoins: "Waliigala Makame", avgWait: "Giddugaleessa Eeggannaa",
+  vehiclesInQueue: "Konkolaatota Tarreetti", adjustServeTime: "Yeroo Tajaajilaa Sirreessi",
+  confirmServe: "Tajaajiluu mirkaneessi?", confirmNoShow: "Hin dhiyanne godhuu?",
+  wsConnected: "Kallattiin Walqabatame", wsDisconnected: "Walqabatamuu Cufame",
+  reserveSlot: "Yeroo Qabadhu", myReservations: "Qabannoo Koo", cancelReservation: "Haquu",
+  slotFull: "Guutee", slotsLeft: "hafe", confirmReservation: "Qabannoo Mirkaneessi",
+  mapView: "Kaartaa Ilaali", liveMap: "Kaartaa Kallattii",
+  aiInsights: "AI Xiinxala", shortageRisk: "Sodaa Dhabuu", demandForecast: "Tilmaama Fedhii",
+  travelSuggestions: "Gorsa Imala", fuelEstimator: "Tilmaama Bobaa",
 };
 
 const ti = {
@@ -174,6 +227,21 @@ const ti = {
   adminDashboard: "Dashboard Akayadi", activeSession: "Hji zelew kfle-gzetatat",
   backToHome: "Nab Mebegesi Temelese", saveChanges: "Lewttat Aqeb", updateProfile: "Profile Azemn",
   pollingLive: "Qetita Zmate", viewStation: "Tabiya Rae",
+  serve: "Saeb", noShow: "Ayteqereb", removeUser: "Aqli", serveTime: "Gze Msaeb",
+  position: "Bota", eta: "Gmtawi Gze", pin: "PIN", elapsed: "Zhalefe Gze",
+  fuelAvailable: "Nedadi Alo", noFuel: "Nedadi Yelen", queueActive: "Werefa Hiji", queuePaused: "Werefa Teqimu",
+  congestionLow: "Tsqat Tsigu", congestionMed: "Mekakelegna Tsigu", congestionHigh: "Zleale Tsigu",
+  liveQueue: "Qetita Werefa", stationControl: "Qutsatser Tabiya", analyticsTitle: "Analitics",
+  alertsTitle: "Mlktat", efficiency: "Btsanet", peakHour: "Zleale Gze",
+  totalServed: "Wuqur Zteseabe", totalJoins: "Wuqur Zteqelaqele", avgWait: "Mekakelegna Mtsbayi",
+  vehiclesInQueue: "Meknatat Bwerefa", adjustServeTime: "Gze Msaeb Asarih",
+  confirmServe: "Msaeb mrkgats?", confirmNoShow: "Ayteqereb godhuu?",
+  wsConnected: "Qetita Teqeqime", wsDisconnected: "Teqeqim Teqimu",
+  reserveSlot: "Gze Qebets", myReservations: "Qebetsatey", cancelReservation: "Aqli",
+  slotFull: "Temilu", slotsLeft: "tehazilu", confirmReservation: "Qebets Mrkgats",
+  mapView: "Mapa Rae", liveMap: "Qetita Mapa",
+  aiInsights: "AI Analitics", shortageRisk: "Sodaa Dhabuu", demandForecast: "Tilmaama Fedhii",
+  travelSuggestions: "Gorsa Imala", fuelEstimator: "Tilmaama Nedadi",
 };
 
 export const LANGUAGES = {
@@ -185,8 +253,20 @@ export const LANGUAGES = {
 
 const LanguageContext = createContext(null);
 
+const STORAGE_KEY = 'ff_lang';
+
 export const LanguageProvider = ({ children }) => {
-  const [lang, setLang] = useState("am");
+  const [lang, setLangState] = useState(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored && LANGUAGES[stored] ? stored : 'am';
+  });
+
+  const setLang = (code) => {
+    if (!LANGUAGES[code]) return;
+    localStorage.setItem(STORAGE_KEY, code);
+    setLangState(code);
+  };
+
   const value = { lang, setLang, t: LANGUAGES[lang].t, languages: LANGUAGES };
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 };
