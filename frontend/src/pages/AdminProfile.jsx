@@ -1,97 +1,144 @@
-import { useState } from 'react';
-import { Camera, Save, CheckCircle2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, CheckCircle2, LogOut, User, Phone } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useLang } from '../context/LanguageContext';
-import AdminLayout from '../components/AdminLayout';
+import { useAuth } from '../context/AuthContext';
+import { api } from '../services/api';
 
-const AdminProfile = () => {
+export default function AdminProfile() {
+  const navigate = useNavigate();
   const { t } = useLang();
-  const [stationName, setStationName] = useState('Central Metro Station');
-  const [contact, setContact] = useState('+251 900 000 001');
-  const [address, setAddress] = useState('123 Energy Way, Downtown District');
-  const [saved, setSaved] = useState(false);
+  const { user, logout } = useAuth();
 
-  const handleUpdate = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [station, setStation] = useState(null);
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user?.phone) setPhone(user.phone);
+    if (user?.email) setEmail(user.email);
+
+    api.listStations()
+      .then(stations => {
+        const mine = stations.find(s =>
+          s.adminId === user?.id || s.adminId?.toString() === user?.id
+        ) || stations[0];
+        if (mine) setStation(mine);
+      })
+      .catch(() => {});
+  }, [user]);
+
+  const handleSave = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const body = {};
+      if (phone.trim() && phone !== user?.phone) body.phone = phone.trim();
+      if (email.trim()) body.email = email.trim();
+      if (password) body.password = password;
+      if (Object.keys(body).length > 0) await api.updateMe(body);
+      setSaved(true);
+      setPassword('');
+      setTimeout(() => setSaved(false), 2500);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <AdminLayout title="Station Profile" backTo="/admin/dashboard" backLabel="Back to Dashboard">
-      <div className="p-6 max-w-2xl">
-        <div className="mb-6">
-          <h1 className="text-lg font-bold text-slate-100">Station Profile</h1>
-          <p className="text-sm text-slate-500 mt-0.5">Manage your station's public information</p>
+    <div className="min-h-screen bg-slate-50 p-6 md:p-10">
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <button onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-2 text-slate-500 hover:text-teal-600 font-semibold transition">
+            <ArrowLeft size={18} /> Back
+          </button>
+          <button onClick={() => { logout(); navigate('/login'); }}
+            className="flex items-center gap-2 text-red-400 hover:text-red-600 font-semibold text-sm transition">
+            <LogOut size={16} /> {t.logout}
+          </button>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-          {/* Banner upload */}
-          <div className="flex items-center gap-5">
-            <div className="w-20 h-20 bg-slate-800 rounded-2xl flex items-center justify-center relative border-2 border-dashed border-slate-700">
-              <Camera className="text-slate-500" size={22} />
-              <button
-                type="button"
-                className="absolute -bottom-2 -right-2 bg-teal-600 text-white p-1.5 rounded-lg border-2 border-slate-900"
-                aria-label="Upload station banner"
-              >
-                <Save size={12} />
-              </button>
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8 mb-6">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-14 h-14 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center">
+              <User size={24} />
             </div>
             <div>
-              <p className="font-semibold text-slate-200 text-sm">Station Banner</p>
-              <p className="text-xs text-slate-500 mt-0.5">Upload a photo of your station entrance.</p>
+              <h1 className="text-xl font-bold text-slate-900">Admin Profile</h1>
+              <span className="text-xs font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full">Station Admin</span>
             </div>
           </div>
 
-          {/* Fields */}
-          <div className="grid md:grid-cols-2 gap-5">
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Station Name</label>
-              <input
-                type="text"
-                value={stationName}
-                onChange={(e) => setStationName(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-slate-100 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition"
-              />
+          <div className="space-y-5">
+            <div>
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 block">Phone</label>
+              <div className="relative">
+                <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input value={phone} onChange={e => setPhone(e.target.value)}
+                  className="w-full pl-9 pr-3 py-3 border rounded-lg border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition text-sm" />
+              </div>
             </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Contact Number</label>
-              <input
-                type="text"
-                value={contact}
-                onChange={(e) => setContact(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-slate-100 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition"
-              />
-            </div>
-            <div className="md:col-span-2 space-y-1.5">
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Full Address</label>
-              <textarea
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                rows={3}
-                className="w-full bg-slate-800 border border-slate-700 text-slate-100 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition resize-none"
-              />
-            </div>
-          </div>
 
-          {saved && (
-            <div className="flex items-center gap-2 text-emerald-400 text-sm font-semibold">
-              <CheckCircle2 size={16} /> Profile updated successfully
+            <div>
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 block">Email (optional)</label>
+              <input value={email} onChange={e => setEmail(e.target.value)}
+                placeholder="Add email address"
+                className="w-full px-3 py-3 border rounded-lg border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition text-sm" />
             </div>
-          )}
 
-          <div className="flex justify-end pt-2">
-            <button
-              type="button"
-              onClick={handleUpdate}
-              className="bg-teal-600 hover:bg-teal-500 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition"
-            >
-              {t.updateProfile || 'Update Profile'}
+            <div>
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 block">New Password (leave blank to keep current)</label>
+              <input type="password" value={password} onChange={e => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full px-3 py-3 border rounded-lg border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition text-sm" />
+            </div>
+
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {saved && (
+              <div className="flex items-center gap-2 text-emerald-600 text-sm font-semibold">
+                <CheckCircle2 size={16} /> Profile updated successfully
+              </div>
+            )}
+
+            <button onClick={handleSave} disabled={loading}
+              className="w-full bg-teal-600 hover:bg-teal-700 disabled:opacity-60 text-white font-bold py-3 rounded-lg transition">
+              {loading ? 'Saving…' : t.saveChanges}
             </button>
           </div>
         </div>
-      </div>
-    </AdminLayout>
-  );
-};
 
-export default AdminProfile;
+        {station && (
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8">
+            <h2 className="text-base font-bold text-slate-800 mb-4">Your Station</h2>
+            <div className="space-y-3 text-sm">
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Station Name</p>
+                <p className="font-semibold text-slate-800">{station.name}</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Address</p>
+                <p className="text-slate-600">{station.address}</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Fuel Types</p>
+                <div className="flex gap-2 mt-1">
+                  {station.fuelTypes?.map(ft => (
+                    <span key={ft} className="capitalize text-xs font-bold bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full">{ft}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-slate-400 mt-4">To manage queues, go to your dashboard.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -43,7 +43,9 @@ function App() {
       {/* ── Driver (authenticated, role: user) ─────────────────────────── */}
       <Route path="/user/dashboard" element={<ProtectedRoute role="user"><UserDashboard /></ProtectedRoute>} />
       <Route path="/driver-home"    element={<ProtectedRoute role="user"><UserDashboard /></ProtectedRoute>} />
+      <Route path="/stations"       element={<ProtectedRoute role="user"><DriverHome /></ProtectedRoute>} />
       <Route path="/driver"         element={<ProtectedRoute role="user"><DriverHome /></ProtectedRoute>} />
+      <Route path="/stations/:id"   element={<ProtectedRoute role="user"><DriverStation /></ProtectedRoute>} />
       <Route path="/driver/station/:id" element={<ProtectedRoute role="user"><DriverStation /></ProtectedRoute>} />
       <Route path="/driver/join-confirm" element={<ProtectedRoute role="user"><MyQueue /></ProtectedRoute>} />
       <Route path="/my-queue"       element={<ProtectedRoute role="user"><MyQueue /></ProtectedRoute>} />
@@ -52,8 +54,10 @@ function App() {
       <Route path="/reservations"   element={<ProtectedRoute role="user"><ReservationPage /></ProtectedRoute>} />
 
       {/* ── Admin (authenticated, role: station_admin) ──────────────────── */}
+      <Route path="/admin"                  element={<ProtectedRoute role="station_admin"><AdminDashboard /></ProtectedRoute>} />
       <Route path="/admin/dashboard"        element={<ProtectedRoute role="station_admin"><AdminDashboard /></ProtectedRoute>} />
       <Route path="/admin/manage-queue"     element={<ProtectedRoute role="station_admin"><QueueAdmin /></ProtectedRoute>} />
+      <Route path="/admin/queue/:fuelType"  element={<ProtectedRoute role="station_admin"><QueueAdmin /></ProtectedRoute>} />
       <Route path="/admin/profile"          element={<ProtectedRoute role="station_admin"><AdminProfile /></ProtectedRoute>} />
       <Route path="/admin/token-validation" element={<ProtectedRoute role="station_admin"><TokenValidation /></ProtectedRoute>} />
       <Route path="/admin/create-station"   element={<ProtectedRoute role="station_admin"><CreateStation /></ProtectedRoute>} />
