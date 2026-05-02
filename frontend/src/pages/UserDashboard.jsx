@@ -2,13 +2,15 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Bell, CircleUserRound, Fuel, LayoutDashboard,
-  LocateFixed, Map, Search, Settings, User, Users, Zap, X, LogOut, RefreshCw,
+  LocateFixed, Map, Search, Settings, User, Users, Zap, X, LogOut, RefreshCw, Brain, Calendar,
 } from 'lucide-react';
 import StationCard from '../components/StationCard';
 import NotificationsPanel from '../components/NotificationsPanel';
 import SettingsPanel from '../components/SettingsPanel';
+import AIInsightsPanel from '../components/AIInsightsPanel';
 import { useLang } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
+import { useSocket } from '../context/SocketContext';
 import { api } from '../services/api';
 
 const POLL_INTERVAL = 15000;
@@ -42,6 +44,7 @@ const UserDashboard = () => {
   const navigate = useNavigate();
   const { t } = useLang();
   const { logout } = useAuth();
+  const { connected, onQueueUpdate } = useSocket();
   const pollRef = useRef(null);
 
   const [stations, setStations] = useState([]);
@@ -52,6 +55,7 @@ const UserDashboard = () => {
   const [search, setSearch] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showAI, setShowAI] = useState(false);
   const [smartPickId, setSmartPickId] = useState(null);
   const [nearMeActive, setNearMeActive] = useState(false);
   const [infoBanner, setInfoBanner] = useState(null);
@@ -76,6 +80,12 @@ const UserDashboard = () => {
   }, []);
 
   useEffect(() => { fetchStations(); }, [fetchStations]);
+
+  // WebSocket: refresh when any station queue updates
+  useEffect(() => {
+    const unsub = onQueueUpdate(() => fetchStations());
+    return unsub;
+  }, [onQueueUpdate, fetchStations]);
 
   useEffect(() => {
     if (!polling) return;
@@ -147,6 +157,8 @@ const UserDashboard = () => {
           <NavItem label={t.stations} icon={<Fuel size={16} />} to="/user/dashboard" />
           <NavItem label={t.myQueue} icon={<Users size={16} />} to="/my-queue" />
           <NavItem label={t.driverHome} icon={<LocateFixed size={16} />} to="/driver" />
+          <NavItem label="Map View" icon={<Map size={16} />} to="/map" />
+          <NavItem label="Reservations" icon={<Calendar size={16} />} to="/reservations" />
           <NavItem label={t.profile} icon={<User size={16} />} to="/profile" />
         </nav>
         <div className="p-3 border-t border-slate-100">
@@ -175,6 +187,9 @@ const UserDashboard = () => {
               {unreadCount > 0 && <span className="absolute -top-1 -right-1 w-4 h-4 bg-teal-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">{unreadCount}</span>}
             </button>
             <button onClick={() => { setShowSettings(true); setShowNotifications(false); }} className="text-slate-500 hover:text-teal-600 transition" aria-label={t.settings}><Settings size={18} /></button>
+            <button onClick={() => setShowAI(true)} className="text-slate-500 hover:text-violet-600 transition" aria-label="AI Insights" title="AI Insights">
+              <Brain size={18} />
+            </button>
             <Link to="/profile" className="text-teal-600" aria-label={t.profile}><CircleUserRound size={20} /></Link>
             <button onClick={handleLogout} className="text-red-400 hover:text-red-600 transition md:hidden" aria-label={t.logout}><LogOut size={18} /></button>
           </div>
@@ -241,7 +256,9 @@ const UserDashboard = () => {
           </div>
 
           <div className="fixed bottom-5 right-5">
-            <button className="w-12 h-12 bg-[#14b8a6] rounded-full text-white shadow-lg flex items-center justify-center hover:bg-teal-600 transition" aria-label="Map view">
+            <button
+              onClick={() => navigate('/map')}
+              className="w-12 h-12 bg-[#14b8a6] rounded-full text-white shadow-lg flex items-center justify-center hover:bg-teal-600 transition" aria-label="Map view">
               <Map size={20} />
             </button>
           </div>
@@ -250,6 +267,7 @@ const UserDashboard = () => {
 
       {showNotifications && <NotificationsPanel onClose={() => setShowNotifications(false)} />}
       {showSettings && <SettingsPanel onClose={() => setShowSettings(false)} />}
+      {showAI && <AIInsightsPanel onClose={() => setShowAI(false)} />}
     </div>
   );
 };

@@ -12,11 +12,16 @@ export const AuthProvider = ({ children }) => {
     if (!token) { setLoading(false); return; }
     api.getMe()
       .then((u) => setUser(u))
-      .catch(() => localStorage.removeItem('ff_token'))
+      .catch(() => {
+        // Token is invalid, expired, or server is down — clear it cleanly
+        localStorage.removeItem('ff_token');
+      })
       .finally(() => setLoading(false));
   }, []);
 
   const login = async (phone, password) => {
+    // Clear any stale token before logging in fresh
+    localStorage.removeItem('ff_token');
     const { token } = await api.login({ phone, password });
     localStorage.setItem('ff_token', token);
     const me = await api.getMe();

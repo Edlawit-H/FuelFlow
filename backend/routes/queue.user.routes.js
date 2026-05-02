@@ -1,36 +1,30 @@
-// TODO: Dev 4
-//import { Router } from 'express';
-//const router = Router();
-//export default router;
+import express from 'express';
+import * as controller from '../controllers/queue.user.controller.js';
+import authenticate from '../middleware/authenticate.js';
 
+const router = express.Router({ mergeParams: true });
 
-import express from "express";
-import * as controller from "../controllers/queue.user.controller.js";
-import authenticate from "../middleware/authenticate.js";
-
-const router = express.Router();
+// These are mounted at /api/v1 so paths are relative to that
+// POST   /api/v1/stations/:id/queues/:fuelType/join
+// DELETE /api/v1/stations/:id/queues/:fuelType/leave
+// GET    /api/v1/queue/my-status
 
 router.post(
-  "/stations/:id/queues/:fuelType/join",
+  '/stations/:id/queues/:fuelType/join',
   authenticate,
   controller.joinQueue
 );
 
 router.delete(
-  "/stations/:id/queues/:fuelType/leave",
+  '/stations/:id/queues/:fuelType/leave',
   authenticate,
   controller.leaveQueue
 );
 
 router.get(
-  "/queue/my-status",
+  '/my-status',
   authenticate,
   controller.getMyStatus
 );
 
 export default router;
-
-
-
-
-

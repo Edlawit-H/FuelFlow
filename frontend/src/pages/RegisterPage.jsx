@@ -121,6 +121,12 @@ const RegisterPage = () => {
           </p>
         </div>
       </div>
+
+      <div className="mt-10 flex items-center space-x-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+        <Link to="/" className="hover:text-slate-600">← Home</Link>
+        <span className="text-slate-300">●</span>
+        <Link to="/login" className="hover:text-slate-600">Sign In</Link>
+      </div>
     </div>
   );
 };

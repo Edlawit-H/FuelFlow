@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({ override: true });
 
 const config = Object.freeze({
   port: process.env.PORT || 5000,
